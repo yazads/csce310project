@@ -17,6 +17,6 @@
     <title>Pet Sitting 2.0 | Home</title>
   </head>
   <body>
-    <h1 style="text-align:center; margin-top:5%; margin-bottom:5%;">Welcome to Pet Sitting 2.0! Hi</h1>
+    <h1 style="text-align:center; margin-top:5%; margin-bottom:5%;">Welcome to Pet Sitting 2.0!</h1>
   </body>
 </html>
