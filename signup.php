@@ -64,13 +64,13 @@
             <input type="password" class="form-control" placeholder="Confirm Password" aria-label="Confirm" aria-describedby="basic-addon1">
         </div>
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="type" id="exampleRadios1" value="0" checked>
+            <input class="form-check-input" type="radio" name="type" id="exampleRadios1" value="1" checked>
             <label class="form-check-label" for="exampleRadios1">
                 I am a Pet Owner
             </label>
         </div>
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="type" id="exampleRadios2" value="1">
+            <input class="form-check-input" type="radio" name="type" id="exampleRadios2" value="2">
             <label class="form-check-label" for="exampleRadios2">
                 I am a Pet Sitter
             </label>
