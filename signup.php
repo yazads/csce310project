@@ -18,7 +18,7 @@
   </head>
   <body>
     <div style="margin-top:1%; margin-left:95%;">
-        <a href="landing.php"><button type="button" class="btn btn-outline-primary">Back</button></a>
+        <a href="login.php"><button type="button" class="btn btn-outline-primary">Back</button></a>
     </div>    
     <div>
         <h1 style="text-align:center; margin-bottom:5%;"> Pet Sitting 2.0 Sign Up!</h1>

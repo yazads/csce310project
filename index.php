@@ -17,6 +17,23 @@
     <title>Pet Sitting 2.0 | Home</title>
   </head>
   <body>
-    <h1 style="text-align:center; margin-top:5%; margin-bottom:5%;">Welcome to Pet Sitting 2.0!</h1>
+    <nav class="navbar navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="index.php">
+          <img src="DogHouse.png" alt="Logo" width="50" height="50" class="d-inline-block align-text-top">
+          Pet Stop
+        </a>
+        <span class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Dropdown button
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">Action</a></li>
+            <li><a class="dropdown-item" href="#">Another action</a></li>
+            <li><a class="dropdown-item" href="#">Something else here</a></li>
+          </ul>
+        </span>
+      </div>
+    </nav>
   </body>
 </html>
