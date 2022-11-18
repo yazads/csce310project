@@ -33,7 +33,7 @@
 
         <div class="input-group mb-3">
             <span class="input-group-text" id="basic-addon1">Password</span>
-            <input type="text" class="form-control" placeholder="Password" aria-label="Username" aria-describedby="basic-addon1">
+            <input type="password" class="form-control" placeholder="Password" aria-hidden="true" aria-label="Username" aria-describedby="basic-addon1">
         </div>
     </div>
       <center><a href="index.php"><button type="button" class="btn btn-outline-primary">Log In</button></a></center>
