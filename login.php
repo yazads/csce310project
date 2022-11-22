@@ -46,6 +46,8 @@
 <?php 
     // note that we don't need to add to database when we get to index.php
     $_SESSION[ 'newUser' ] = FALSE;
+    // unset email session var
+    unset($_SESSION[ 'email' ]);
 ?>
   </body>
 </html>
