@@ -117,7 +117,12 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     <h1 style="text-align:center; margin-top:5%; margin-bottom:5%;">Welcome to Pet Sitting 2.0, <?php echo $personFName; ?>!</h1>
 <?php
     echo "<table style='border: solid 1px black;'>";
-    echo "<tr><th>AppointmentID</th><th>Pet Owner ID</th><th>Pet Sitter ID</th><th>Day</th> <th>Month</th> <th>Year</th> <th>Start Time</th> <th>Duration</th> <th>Pets</th></tr>";
+    if($personType == 1){
+      echo "<th>Pet Sitter First Name</th><th> Pet Sitter Last Name</th><th> Pet Sitter Email</th><th>Start Time</th> <th>Duration (hours) </th></tr>";
+    }else{
+      echo "<tr><th>Pet Owner First Name</th><th>Pet Owner Last Name</th><th>Pet Owner Email</th><th>Start Time</th> <th>Duration (hours) </th></tr>";
+    }
+    
 
     class TableRows extends RecursiveIteratorIterator {
       function __construct($it) {
@@ -135,26 +140,32 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
       function endChildren() {
         echo "</tr>" . "\n";
       }
+
     }
 
     try {
         // get appointment information from database
       if($personType == 1){
         // this is a pet owner
-        $q = $conn->prepare("SELECT * FROM Appointment where petOwner = :personID");
+        $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration
+        FROM (appointment
+        INNER JOIN person ON appointment.petSitter = person.personID) 
+        WHERE appointment.petOwner = :personID");
       }else{
         // this is a pet sitter
-        $q = $conn->prepare("SELECT * FROM Appointment where petSitter = :personID");
+        $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration
+        FROM (appointment
+        INNER JOIN person ON appointment.petOwner = person.personID)
+        WHERE appointment.petSitter = :personID");
       }
       // replace the placeholder with the personID
       $q->bindParam(':personID',$personID);
 
       // do the sql query and store the result in an array
       $q->execute();
-      $result = $q->fetch();
 
       // TODO:
-      // convert from personIDs to actual names (or maybe we want to do just emails or both emails and names idk?)
+      // convert from personIDs to actual names (or maybe we want to do just emails or both emails and names idk?)--done!
       // for each appointment, get the pet list and review
       // maybe get info for each pet in list
       $result = $q->setFetchMode(PDO::FETCH_ASSOC);
