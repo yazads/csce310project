@@ -17,6 +17,9 @@
     <title>Pet Sitting 2.0 | Sign Up</title>
   </head>
   <body>
+    <?php
+        session_start();
+    ?>
     <div style="margin-top:1%; margin-left:95%;">
         <a href="landing.php"><button type="button" class="btn btn-outline-primary">Back</button></a>
     </div>    
@@ -78,5 +81,9 @@
         <center><button type="submit" class="btn btn-outline-primary">Sign Up</button></a></center>
     </form>
     </div>
+    <?php 
+    // note that we need to add to database when we get to index.php
+    $_SESSION[ 'newUser' ] = TRUE;
+    ?>
   </body>
 </html>
