@@ -59,26 +59,33 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
   if(isset($_POST['email'])){
     $email = $_POST['email'];
 
-    // query db for persontype, personID, and full name associated with the email
-    try{
-      // prepare the query
-      $q = $conn->prepare("SELECT personID, personFName, personLName, personType FROM PERSON WHERE email = :email");
-      // replace the placeholder with the email
-      $q->bindParam(':email',$email);
-      // do the sql query and store the result in an array
-      $q->execute();
-      $result = $q->fetch();
+  // if not set, set session var email to the user's email (otherwise refresh breaks the page)
+  if(!isset($_SESSION[ 'email'])){
+    $_SESSION[ 'email' ] = $email;
+  }
+  }else{
+    $email = $_SESSION[ 'email' ];
+  }
 
-      // check that we got the id and name then save them to use later
-      if(isset($result['personID']) && isset($result['personFName']) && isset($result['personLName']) && isset($result['personType'])){
-        $personID = $result['personID'];
-        $personFName = $result['personFName'];
-        $personLName = $result['personLName'];
-        $personType = $result['personType'];
-      }
-    }catch(PDOException $e) {
-      echo $sql . "<br>" . $e->getMessage();
+  // query db for persontype, personID, and full name associated with the email
+  try{
+    // prepare the query
+    $q = $conn->prepare("SELECT personID, personFName, personLName, personType FROM PERSON WHERE email = :email");
+    // replace the placeholder with the email
+    $q->bindParam(':email',$email);
+    // do the sql query and store the result in an array
+    $q->execute();
+    $result = $q->fetch();
+
+    // check that we got the id and name then save them to use later
+    if(isset($result['personID']) && isset($result['personFName']) && isset($result['personLName']) && isset($result['personType'])){
+      $personID = $result['personID'];
+      $personFName = $result['personFName'];
+      $personLName = $result['personLName'];
+      $personType = $result['personType'];
     }
+  }catch(PDOException $e) {
+    echo $sql . "<br>" . $e->getMessage();
   }
 ?>
 
