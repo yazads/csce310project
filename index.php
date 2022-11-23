@@ -3,7 +3,7 @@ session_start();
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "petsitting";
+$dbname = "petSitting";
 $newUser = $_SESSION[ 'newUser' ];
 
 // connect to petsitting db
@@ -111,9 +111,29 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
       integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
       crossorigin="anonymous"
     />
-    <title>Pet Sitting 2.0 | Home</title>
+    <title>Pet Stop | Home</title>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" ></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>
   </head>
   <body>
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid" >
+          <a class="navbar-brand" href="index.php" style="font-size:32px; color:#FAE8E0;">
+            <img src="DogHouse.png" alt="Logo" width="50" height="50" class="d-inline-block align-text-top">
+            Pet Stop
+          </a>
+          <span class="dropdown" style="padding-right:1%;">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <?php echo $personFName; ?>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" style="margin-right:10%;">
+              <li><a class="dropdown-item" href="#">Account Info</a></li>
+              <li><a class="dropdown-item" href="#">Something else</a></li>
+              <li><a class="dropdown-item" href="login.php">Sign Out</a></li>
+            </ul>
+          </span>
+        </div>
+      </nav>
     <h1 style="text-align:center; margin-top:5%; margin-bottom:5%;">Welcome to Pet Sitting 2.0, <?php echo $personFName; ?>!</h1>
 <?php
     echo "<table style='border: solid 1px black;'>";
@@ -168,23 +188,5 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     echo "</table>";
     
 ?>
-    <nav class="navbar navbar-dark bg-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="index.php">
-          <img src="DogHouse.png" alt="Logo" width="50" height="50" class="d-inline-block align-text-top">
-          Pet Stop
-        </a>
-        <span class="dropdown">
-          <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Dropdown button
-          </button>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-          </ul>
-        </span>
-      </div>
-    </nav>
   </body>
 </html>

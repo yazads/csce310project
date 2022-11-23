@@ -14,7 +14,7 @@
       integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
       crossorigin="anonymous"
     />
-    <title>Pet Sitting 2.0 | Sign Up</title>
+    <title>Pet Stop | Sign Up</title>
   </head>
   <body>
     <?php

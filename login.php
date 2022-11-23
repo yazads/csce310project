@@ -20,11 +20,6 @@
   <?php
       session_start();
   ?>
-    <div style="position:relative; margin-top:1%; margin-left:95%;">
-        <a href="landing.php">
-            <button type="button" class="btn btn-outline-primary">Back</button>
-        </a>
-    </div>
     <div>
         <center style="margin-top:3%; margin-bottom:3%;"> <img src="Pet_Stop.png" alt="Logo" width="250" height="250" class="d-inline-block align-text-top" style="border-radius: 40px;"> </center>
     </div>
@@ -41,7 +36,7 @@
         </div>
       
     </div>
-      <center><a href="index.php"><button type="Submit" class="btn btn-outline-primary">Log In</button></a></center>
+      <center style="margin-bottom:10px;"><a href="index.php"><button type="Submit" class="btn btn-outline-primary">Log In</button></a></center>
 </form>
 <?php 
     // note that we don't need to add to database when we get to index.php
@@ -49,9 +44,6 @@
     // unset email session var
     unset($_SESSION[ 'email' ]);
 ?>
-      <div style="margin-bottom: 10px;">
-        <center><a href="index.php"><button type="button" class="btn btn-outline-primary">Log In</button></a></center>
-      </div>
       <div>
         <center><a href="signup.php"><button type="button" class="btn btn-outline-primary">Don't Have an Account? Sign Up!</button></a></center>
       </div>
