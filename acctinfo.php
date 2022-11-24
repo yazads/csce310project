@@ -115,27 +115,29 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" ></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>
     <style>
-      .wrap {
-        width: 100%;
-        overflow:auto;
+        .wrap {
+            width: 100%;
+            overflow:auto;
+            text-align:center;
+            height:100%;
+            padding-top: 5%;
+        }
+        .fleft {
+            float:left; 
+            width: 50%;
+            height: 100%;
+            text-align:center;
         }
 
-      .fleft {
-        float:left; 
-        width: 50%;
-        height: 100%;
-        text-align:center;
-      }
-
-      .fright {
-        float: right;
-        height: 100%;          
-        width: 50%;
-        text-align:center;
-      }
-      .logo {
-        border-radius:5px;
-      }
+        .fright {
+            float: right;
+            height: 100%;          
+            width: 50%;
+            text-align:center;
+        }
+        .logo {
+            border-radius:5px;
+        }
       </style>
   </head>
   <body>
@@ -151,23 +153,22 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
               <?php echo $personFName; ?>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" style="margin-right:10%;">
-              <li><a class="dropdown-item" href="acctinfo.php">Account Info</a></li>
+              <li><a class="dropdown-item" href="#">Account Info</a></li>
               <li><a class="dropdown-item" href="#">Something else</a></li>
               <li><a class="dropdown-item" href="login.php">Sign Out</a></li>
             </ul>
           </span>
         </div>
       </nav>
-    <h1 style="text-align:center; margin-top:5%; margin-bottom:5%;">Welcome to Pet Stop, <?php echo $personFName; ?>!</h1>
     <div class = "wrap">
-      <div class = "fleft">
-        <h2>Upcoming Events</h2>
-        oo oo ah ah 
-      </div>
-      <div class = "fright">
-        <h2>Previous Events</h2>
-        happy tgivs
-      </div>
+        <div class = "fleft">
+            <h2>My Pets</h2>
+            goofy ahh
+        </div>
+        <div class = "fright">
+            <h2>My Info</h2>
+            silly goose
+        </div>
     </div>
   </div>
 <?php
