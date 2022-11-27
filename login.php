@@ -16,10 +16,10 @@
     />
     <title>Pet Stop | Login</title>
   </head>
-  <body>
-  <?php
-      session_start();
-  ?>
+  <body style="background-color:#FAE8E0">
+    <?php
+        session_start();
+    ?>
     <div>
         <center style="margin-top:3%; margin-bottom:3%;"> <img src="Pet_Stop.png" alt="Logo" width="250" height="250" class="d-inline-block align-text-top" style="border-radius: 40px;"> </center>
     </div>
@@ -32,7 +32,7 @@
 
         <div class="input-group mb-3">
             <span class="input-group-text" id="basic-addon1">Password</span>
-            <input type="text" class="form-control" placeholder="Password" aria-label="Username" aria-describedby="basic-addon1">
+            <input type="password" class="form-control" placeholder="Password" aria-label="Username" aria-describedby="basic-addon1">
         </div>
       
     </div>
