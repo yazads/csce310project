@@ -168,19 +168,26 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             function endChildren() {
               echo "</tr>" . "\n";
             }
-          }
+      
+    }
 
-          try {
-              // get appointment information from database
-            if($personType == 1){
-              // this is a pet owner
-              $q = $conn->prepare("SELECT * FROM Appointment WHERE petOwner = :personID AND DATE(startTime) < CURDATE() ORDER BY startTime ASC");
-            }else{
-              // this is a pet sitter
-              $q = $conn->prepare("SELECT * FROM Appointment where petSitter = :personID AND DATE(startTime) < CURDATE() ORDER BY startTime ASC");
-            }
-            // replace the placeholder with the personID
-            $q->bindParam(':personID',$personID);
+    try {
+        // get appointment information from database
+      if($personType == 1){
+        // this is a pet owner
+        $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration
+        FROM (appointment
+        INNER JOIN person ON appointment.petSitter = person.personID) 
+        WHERE appointment.petOwner = :personID");
+      }else{
+        // this is a pet sitter
+        $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration
+        FROM (appointment
+        INNER JOIN person ON appointment.petOwner = person.personID)
+        WHERE appointment.petSitter = :personID");
+      }
+      // replace the placeholder with the personID
+      $q->bindParam(':personID',$personID);
 
             // do the sql query and store the result in an array
             $q->execute();
