@@ -21,7 +21,7 @@
         session_start();
     ?>
     <div>
-        <center style="margin-top:3%; margin-bottom:3%;"> <img src="Pet_Stop.png" alt="Logo" width="250" height="250" class="d-inline-block align-text-top" style="border-radius: 40px;"> </center>
+        <center style="margin-top:3%; margin-bottom:3%;"> <img src="assets/Pet_Stop.png" alt="Logo" width="250" height="250" class="d-inline-block align-text-top" style="border-radius: 40px;"> </center>
     </div>
     <div style="margin-right:30%; margin-left:30%;">
     <form action="index.php" method="post">

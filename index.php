@@ -128,7 +128,7 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     <nav class="navbar navbar-dark bg-dark">
         <div class="container-fluid" >
           <a class="navbar-brand" href="index.php" style="font-size:32px; color:#FAE8E0;">
-            <img src="DogHouse.png" alt="Logo" width="50" height="50" class="d-inline-block align-text-top logo">
+            <img src="assets/DogHouse.png" alt="Logo" width="50" height="50" class="d-inline-block align-text-top logo">
             <strong>Pet Stop</strong>
           </a>
           <span class="dropdown" style="padding-right:1%;">
