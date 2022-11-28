@@ -1,0 +1,26 @@
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('1','1');
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('17','13');
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('2','2');
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('3','2');
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('18','14');
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('4','3');
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('5','3');
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('19','15');
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('6','4');
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('20','16');
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('7','5');
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('21','17');
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('8','6');
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('22','18');
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('9','7');
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('23','19'); -- lol what a coincidence
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('10','8');
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('10','20');
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('11','9');
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('11','21');
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('12','10');
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('12','22');
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('13','11');
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('14','23');
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('15','12');
+INSERT INTO `petappointment`(`petID`, `appointmentID`) VALUES ('16','12');
