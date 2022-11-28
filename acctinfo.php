@@ -5,6 +5,7 @@ $username = "root";
 $password = "";
 $dbname = "petSitting";
 $newUser = $_SESSION[ 'newUser' ];
+$newPet = $_SESSION[ 'newPet' ];
 
 // connect to petsitting db
 $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
@@ -34,7 +35,7 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         
         // prepare an sql query
         $q = $conn->prepare("INSERT INTO PERSON (email, phone, personFName, personLName, streetAddress, city, USState, zipCode, personType)
-        VALUES (:email, :phone, :fname, :lname, :street, :usState, :city, :zip, :personType)");
+        VALUES (:email, :phone, :fname, :lname, :street, :city, :usState, :zip, :personType)");
       
         // replace the placeholders with the info from the sign up form
         $q->bindParam(':email',$email);
@@ -42,8 +43,8 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $q->bindParam(':fname', $fname);
         $q->bindParam(':lname',$lname);
         $q->bindParam(':street',$street);
-        $q->bindParam(':usState',$usState);
         $q->bindParam(':city',$city);
+        $q->bindParam(':usState',$usState);
         $q->bindParam(':zip',$zip);
         $q->bindParam(':personType',$personType);
         
@@ -58,7 +59,7 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
   // get personId based on email
   if(isset($_POST['email'])){
     $email = $_POST['email'];
-
+    
   // if not set, set session var email to the user's email (otherwise refresh breaks the page)
   if(!isset($_SESSION[ 'email'])){
     $_SESSION[ 'email' ] = $email;
@@ -92,6 +93,39 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
   }catch(PDOException $e) {
     echo $sql . "<br>" . $e->getMessage();
   }
+
+
+  if($newPet){
+    // check if post info is set before assigning variables
+    // otherwise we get annoying warnings on refresh
+    if(isset($_POST["petname"]) && isset($_POST["species"]) && isset($_POST["requirements"])){
+      $petname = $_POST["petname"];
+      $species = $_POST["species"];
+      $requirements = $_POST["requirements"];  
+    }
+
+    // to prevent adding empty rows to the db after refreshing, only connect to db if attributes have info
+    if(!empty($petname) && !empty($species) && !empty($requirements)){
+      try {
+        
+        // prepare an sql query
+        $q = $conn->prepare("INSERT INTO PET (personID, petName, species, requirements)
+        VALUES (:personID, :petName, :species, :requirements)");
+      
+        // replace the placeholders with the info from the sign up form
+        $q->bindParam(':personID',$personID);
+        $q->bindParam(':petName',$petname);
+        $q->bindParam(':species', $species);
+        $q->bindParam(':requirements',$requirements);
+        
+        // do the sql query
+        $q->execute();
+      } catch(PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+      }
+    }
+  }
+
 ?>
 
 <script>
@@ -148,10 +182,54 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         <div class = "fleft">
             <h2>My Pets</h2>
             <br></br>
-            goofy ahh
-            
-        <a href="createpet.php"><button type="button" class="btn btn-outline-primary">Add New Pet</button></a>
+            <?php
+              echo "<table style='border: solid 1px black;'>";
+              echo "<th>Pet ID</th> <th>Person ID</th> <th>Pet Name</th> <th>Species</th> <th>Requirements</th> </tr>";
+
+              class TableRows extends RecursiveIteratorIterator {
+                function __construct($it) {
+                  parent::__construct($it, self::LEAVES_ONLY);
+                }
+
+                function current() {
+                  return "<td style='width:150px;border:1px solid black;'>" . parent::current(). "</td>";
+                }
+
+                function beginChildren() {
+                  echo "<tr>";
+                }
+
+                function endChildren() {
+                  echo "</tr>" . "\n";
+                }
+              }
+
+              try {
+                $q = $conn->prepare("SELECT * FROM pet WHERE personID = :personID");
+                // replace the placeholder with the personID
+                $q->bindParam(':personID',$personID);
+
+                // do the sql query and store the result in an array
+                $q->execute();
+
+                // TODO:
+                // convert from personIDs to actual names (or maybe we want to do just emails or both emails and names idk?)
+                // for each appointment, get the pet list and review
+                // maybe get info for each pet in list
+                
+                $result = $q->setFetchMode(PDO::FETCH_ASSOC);
+                foreach(new TableRows(new RecursiveArrayIterator($q->fetchAll())) as $k=>$v) {
+                  echo $v;
+                }
+              } catch(PDOException $e) {
+                echo "Error: " . $e->getMessage();
+              }
+              echo "</table>";
+            ?>
+            <br></br>
+            <a href="createpet.php"><button type="button" class="btn btn-outline-primary">Add New Pet</button></a>
         </div>
+        
         <div class = "fright">
             <h2>My Info</h2>
             <br></br>

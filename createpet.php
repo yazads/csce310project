@@ -1,4 +1,131 @@
-<?php?>
+<?php
+session_start();
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "petSitting";
+$newUser = $_SESSION[ 'newUser' ];
+$newPet = $_SESSION[ 'newPet' ];
+
+// connect to petsitting db
+$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+
+// set the PDO error mode to exception
+$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+  // only add to db if we're coming from signup.php
+  if($newUser){
+    // check if post info is set before assigning variables
+    // otherwise we get annoying warnings on refresh
+    if(isset($_POST["fname"]) && isset($_POST["lname"]) && isset($_POST["email"]) && isset($_POST["phone"]) && isset($_POST["street"]) && isset($_POST["city"]) && isset($_POST["state"]) && isset($_POST["zip"]) && isset($_POST["type"])){
+      $fname = $_POST["fname"];
+      $lname = $_POST["lname"];
+      $email = $_POST["email"];
+      $phone = $_POST["phone"];
+      $street = $_POST["street"];
+      $city = $_POST["city"];
+      $usState = $_POST["state"];
+      $zip = $_POST["zip"];
+      $personType = $_POST["type"];
+    }
+
+    // to prevent adding empty rows to the db after refreshing, only connect to db if attributes have info
+    if(!empty($fname) && !empty($lname) && !empty($email) && !empty($phone) && !empty($street) && !empty($city) && !empty($usState) && !empty($zip) && !empty($personType)){
+      try {
+        
+        // prepare an sql query
+        $q = $conn->prepare("INSERT INTO PERSON (email, phone, personFName, personLName, streetAddress, city, USState, zipCode, personType)
+        VALUES (:email, :phone, :fname, :lname, :street, :city, :usState, :zip, :personType)");
+      
+        // replace the placeholders with the info from the sign up form
+        $q->bindParam(':email',$email);
+        $q->bindParam(':phone',$phone);
+        $q->bindParam(':fname', $fname);
+        $q->bindParam(':lname',$lname);
+        $q->bindParam(':street',$street);
+        $q->bindParam(':city',$city);
+        $q->bindParam(':usState',$usState);
+        $q->bindParam(':zip',$zip);
+        $q->bindParam(':personType',$personType);
+        
+        // do the sql query
+        $q->execute();
+      } catch(PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+      }
+    }
+  }
+
+  // get personId based on email
+  if(isset($_POST['email'])){
+    $email = $_POST['email'];
+    
+  // if not set, set session var email to the user's email (otherwise refresh breaks the page)
+  if(!isset($_SESSION[ 'email'])){
+    $_SESSION[ 'email' ] = $email;
+  }
+  }else{
+    $email = $_SESSION[ 'email' ];
+  }
+
+  // query db for persontype, personID, and full name associated with the email
+  try{
+    // prepare the query
+    $q = $conn->prepare("SELECT personID, personFName, personLName, personType, phone, streetAddress, city, USState, zipCode FROM PERSON WHERE email = :email");
+    // replace the placeholder with the email
+    $q->bindParam(':email',$email);
+    // do the sql query and store the result in an array
+    $q->execute();
+    $result = $q->fetch();
+
+    // check that we got the id and name then save them to use later
+    if(isset($result['personID']) && isset($result['personFName']) && isset($result['personLName']) && isset($result['personType']) && isset($result['phone']) && isset($result['streetAddress']) && isset($result['city']) && isset($result['USState']) && isset($result['zipCode'])){
+      $personID = $result['personID'];
+      $personFName = $result['personFName'];
+      $personLName = $result['personLName'];
+      $personType = $result['personType'];
+      $phone = $result['phone'];
+      $streetAddress = $result['streetAddress'];
+      $city = $result['city'];
+      $usState = $result['USState'];
+      $zipCode = $result['zipCode'];
+    }
+  }catch(PDOException $e) {
+    echo $sql . "<br>" . $e->getMessage();
+  }
+
+
+  if($newPet){
+    // check if post info is set before assigning variables
+    // otherwise we get annoying warnings on refresh
+    if(isset($_POST["petname"]) && isset($_POST["species"]) && isset($_POST["requirements"])){
+      $petname = $_POST["petname"];
+      $species = $_POST["species"];
+      $requirements = $_POST["requirements"];  
+    }
+
+    // to prevent adding empty rows to the db after refreshing, only connect to db if attributes have info
+    if(!empty($petname) && !empty($species) && !empty($requirements)){
+      try {
+        // prepare an sql query
+        $q = $conn->prepare("INSERT INTO PET (personID, petName, species, requirements)
+        VALUES (:personID, :petName, :species, :requirements)");
+
+        // replace the placeholders with the info from the sign up form
+        $q->bindParam(':personID',$personID);
+        $q->bindParam(':petName',$petname);
+        $q->bindParam(':species', $species);
+        $q->bindParam(':requirements',$requirements);
+
+        // do the sql query
+        $q->execute();
+      } catch(PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+      }
+    }
+  }
+
+?>
 
 <script>
   // prevent resubmission of form on refresh
@@ -57,7 +184,7 @@
             <h1 style="text-align:center; margin-bottom:5%;"> New Pet </h1>
         </div>
         <div style="margin-right:30%; margin-left:30%;">
-            <form action="index.php" method="post">
+            <form action="acctinfo.php" method="post">
                 <div class="input-group mb-3">
                     <span class="input-group-text">Pet Name</span>
                     <input type="text" placeholder="Shadow" aria-label="Pet Name" class="form-control" name="petname">
@@ -65,46 +192,50 @@
 
                 <div class="input-group">
                     <span class="input-group-text">Requirements</span>
-                    <textarea class="form-control" placeholder="Food, Walks, Medicine, etc." aria-label="With textarea"></textarea>
+                    <textarea class="form-control" placeholder="Food, Walks, Medicine, etc." aria-label="With textarea" name="requirements"></textarea>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                    <input class="form-check-input" type="radio" name="species" id="flexRadioDefault1" value="1">
                         <label class="form-check-label" for="flexRadioDefault1">
                             Dog
                         </label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                    <input class="form-check-input" type="radio" name="species" id="flexRadioDefault2" value="2">
                         <label class="form-check-label" for="flexRadioDefault2">
                             Cat
                         </label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                        <label class="form-check-label" for="flexRadioDefault1">
+                    <input class="form-check-input" type="radio" name="species" id="flexRadioDefault3" value="3">
+                        <label class="form-check-label" for="flexRadioDefault3">
                             Fish
                         </label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                        <label class="form-check-label" for="flexRadioDefault1">
+                    <input class="form-check-input" type="radio" name="species" id="flexRadioDefault4" value="4">
+                        <label class="form-check-label" for="flexRadioDefault4">
                             Bird
                         </label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                        <label class="form-check-label" for="flexRadioDefault1">
+                    <input class="form-check-input" type="radio" name="species" id="flexRadioDefault5" value="5">
+                        <label class="form-check-label" for="flexRadioDefault5">
                             Monkey
                         </label>
-                </div>                
+                </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                        <label class="form-check-label" for="flexRadioDefault1">
+                    <input class="form-check-input" type="radio" name="species" id="flexRadioDefault6" value="6">
+                        <label class="form-check-label" for="flexRadioDefault6">
                             Other (Identify in Requirements)
                         </label>
                 </div>
                 <center><button type="submit" class="btn btn-outline-primary" style="padding-top:1%;">Create New Pet</button></a></center>
             </form>
         </div>
+        <?php 
+            // note that we need to add to database when we get back
+            $_SESSION[ 'newPet' ] = TRUE;
+        ?>
     </body>
 </html>
