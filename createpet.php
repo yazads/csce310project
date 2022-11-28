@@ -107,27 +107,16 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     // to prevent adding empty rows to the db after refreshing, only connect to db if attributes have info
     if(!empty($petname) && !empty($species) && !empty($requirements)){
       try {
-        
         // prepare an sql query
         $q = $conn->prepare("INSERT INTO PET (personID, petName, species, requirements)
         VALUES (:personID, :petName, :species, :requirements)");
-      
+
         // replace the placeholders with the info from the sign up form
         $q->bindParam(':personID',$personID);
         $q->bindParam(':petName',$petname);
         $q->bindParam(':species', $species);
         $q->bindParam(':requirements',$requirements);
 
-        // $q->bindParam(':email',$email);
-        // $q->bindParam(':phone',$phone);
-        // $q->bindParam(':fname', $fname);
-        // $q->bindParam(':lname',$lname);
-        // $q->bindParam(':street',$street);
-        // $q->bindParam(':city',$city);
-        // $q->bindParam(':usState',$usState);
-        // $q->bindParam(':zip',$zip);
-        // $q->bindParam(':personType',$personType);
-        
         // do the sql query
         $q->execute();
       } catch(PDOException $e) {
@@ -234,7 +223,7 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                         <label class="form-check-label" for="flexRadioDefault5">
                             Monkey
                         </label>
-                </div>                
+                </div>
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="species" id="flexRadioDefault6" value="6">
                         <label class="form-check-label" for="flexRadioDefault6">

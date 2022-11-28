@@ -117,16 +117,6 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $q->bindParam(':petName',$petname);
         $q->bindParam(':species', $species);
         $q->bindParam(':requirements',$requirements);
-
-        // $q->bindParam(':email',$email);
-        // $q->bindParam(':phone',$phone);
-        // $q->bindParam(':fname', $fname);
-        // $q->bindParam(':lname',$lname);
-        // $q->bindParam(':street',$street);
-        // $q->bindParam(':city',$city);
-        // $q->bindParam(':usState',$usState);
-        // $q->bindParam(':zip',$zip);
-        // $q->bindParam(':personType',$personType);
         
         // do the sql query
         $q->execute();
@@ -212,7 +202,6 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 function endChildren() {
                   echo "</tr>" . "\n";
                 }
-      
               }
 
               try {
