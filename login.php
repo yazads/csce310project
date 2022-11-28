@@ -26,10 +26,10 @@
     <div style="margin-right:30%; margin-left:30%;">
     <form action="index.php" method="post">
         <div class="input-group mb-3" >
-            <span class="input-group-text" id="basic-addon1">Username</span>
-            <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" name="email">
+            <span class="input-group-text" id="basic-addon1">Email</span>
+            <input type="text" class="form-control" placeholder="Email" aria-label="Username" aria-describedby="basic-addon1" name="email">
         </div>
-
+        
         <div class="input-group mb-3">
             <span class="input-group-text" id="basic-addon1">Password</span>
             <input type="password" class="form-control" placeholder="Password" aria-label="Username" aria-describedby="basic-addon1">
