@@ -149,6 +149,8 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             <h2>My Pets</h2>
             <br></br>
             goofy ahh
+            
+        <a href="createpet.php"><button type="button" class="btn btn-outline-primary">Add New Pet</button></a>
         </div>
         <div class = "fright">
             <h2>My Info</h2>
