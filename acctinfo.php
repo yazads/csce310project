@@ -162,11 +162,11 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
       </nav>
     <div class = "wrap">
         <div class = "fleft">
-            <h2>My Pets</h2>
+            <h2><?php echo $personFName; echo ' '; echo $personLName; ?>'s Pets</h2>
             goofy ahh
         </div>
         <div class = "fright">
-            <h2>My Info</h2>
+            <h2><?php echo $personFName; echo ' '; echo $personLName; ?>'s Info</h2>
             silly goose
         </div>
     </div>
