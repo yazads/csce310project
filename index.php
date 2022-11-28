@@ -150,7 +150,11 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         <h2>Previous Appointments</h2>
         <?php
           echo "<table style='border: solid 1px black;'>";
-          echo "<tr><th>AppointmentID</th><th>Pet Owner ID</th><th>Pet Sitter ID</th><th>Day</th> <th>Month</th> <th>Year</th> <th>Start Time</th> <th>Duration</th></tr>";
+          if($personType == 1){
+            echo "<th>Pet Sitter First Name</th><th> Pet Sitter Last Name</th><th> Pet Sitter Email</th><th>Start Time</th> <th>Duration (hours) </th></tr>";
+          }else{
+            echo "<tr><th>Pet Owner First Name</th><th>Pet Owner Last Name</th><th>Pet Owner Email</th><th>Start Time</th> <th>Duration (hours) </th></tr>";
+          }
 
           class TableRows extends RecursiveIteratorIterator {
             function __construct($it) {
@@ -168,19 +172,26 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             function endChildren() {
               echo "</tr>" . "\n";
             }
-          }
+      
+    }
 
-          try {
-              // get appointment information from database
-            if($personType == 1){
-              // this is a pet owner
-              $q = $conn->prepare("SELECT * FROM Appointment WHERE petOwner = :personID AND DATE(startTime) < CURDATE() ORDER BY startTime ASC");
-            }else{
-              // this is a pet sitter
-              $q = $conn->prepare("SELECT * FROM Appointment where petSitter = :personID AND DATE(startTime) < CURDATE() ORDER BY startTime ASC");
-            }
-            // replace the placeholder with the personID
-            $q->bindParam(':personID',$personID);
+    try {
+        // get appointment information from database
+      if($personType == 1){
+        // this is a pet owner
+        $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration
+        FROM (appointment
+        INNER JOIN person ON appointment.petSitter = person.personID) 
+        WHERE appointment.petOwner = :personID AND DATE(startTime) < CURDATE() ORDER BY startTime ASC");
+      }else{
+        // this is a pet sitter
+        $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration
+        FROM (appointment
+        INNER JOIN person ON appointment.petOwner = person.personID)
+        WHERE appointment.petSitter = :personID AND DATE(startTime) < CURDATE() ORDER BY startTime ASC");
+      }
+      // replace the placeholder with the personID
+      $q->bindParam(':personID',$personID);
 
             // do the sql query and store the result in an array
             $q->execute();
@@ -204,16 +215,27 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         <h2>Upcoming Appointments</h2>
         <?php
           echo "<table style='border: solid 1px black;'>";
-          echo "<tr><th>AppointmentID</th><th>Pet Owner ID</th><th>Pet Sitter ID</th><th>Day</th> <th>Month</th> <th>Year</th> <th>Start Time</th> <th>Duration</th></tr>";
+          if($personType == 1){
+            echo "<th>Pet Sitter First Name</th><th> Pet Sitter Last Name</th><th> Pet Sitter Email</th><th>Start Time</th> <th>Duration (hours) </th></tr>";
+          }else{
+            echo "<tr><th>Pet Owner First Name</th><th>Pet Owner Last Name</th><th>Pet Owner Email</th><th>Start Time</th> <th>Duration (hours) </th></tr>";
+          }
+          
 
           try {
               // get appointment information from database
             if($personType == 1){
               // this is a pet owner
-              $q = $conn->prepare("SELECT * FROM Appointment WHERE petOwner = :personID AND DATE(startTime) >= CURDATE() ORDER BY startTime ASC");
+              $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration
+              FROM (appointment
+              INNER JOIN person ON appointment.petSitter = person.personID) 
+              WHERE appointment.petOwner = :personID AND DATE(startTime) >= CURDATE() ORDER BY startTime ASC");
             }else{
               // this is a pet sitter
-              $q = $conn->prepare("SELECT * FROM Appointment where petSitter = :personID AND DATE(startTime) >= CURDATE() ORDER BY startTime ASC");
+              $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration
+              FROM (appointment
+              INNER JOIN person ON appointment.petOwner = person.personID)
+              WHERE appointment.petSitter = :personID AND DATE(startTime) >= CURDATE() ORDER BY startTime ASC");
             }
             // replace the placeholder with the personID
             $q->bindParam(':personID',$personID);
