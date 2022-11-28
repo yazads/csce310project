@@ -34,7 +34,7 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         
         // prepare an sql query
         $q = $conn->prepare("INSERT INTO PERSON (email, phone, personFName, personLName, streetAddress, city, USState, zipCode, personType)
-        VALUES (:email, :phone, :fname, :lname, :street, :usState, :city, :zip, :personType)");
+        VALUES (:email, :phone, :fname, :lname, :street, :city, :usState, :zip, :personType)");
       
         // replace the placeholders with the info from the sign up form
         $q->bindParam(':email',$email);
@@ -42,8 +42,8 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $q->bindParam(':fname', $fname);
         $q->bindParam(':lname',$lname);
         $q->bindParam(':street',$street);
-        $q->bindParam(':usState',$usState);
         $q->bindParam(':city',$city);
+        $q->bindParam(':usState',$usState);
         $q->bindParam(':zip',$zip);
         $q->bindParam(':personType',$personType);
         
