@@ -58,7 +58,7 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
   // get personId based on email
   if(isset($_POST['email'])){
     $email = $_POST['email'];
-
+    
   // if not set, set session var email to the user's email (otherwise refresh breaks the page)
   if(!isset($_SESSION[ 'email'])){
     $_SESSION[ 'email' ] = $email;
@@ -70,7 +70,7 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
   // query db for persontype, personID, and full name associated with the email
   try{
     // prepare the query
-    $q = $conn->prepare("SELECT personID, personFName, personLName, personType FROM PERSON WHERE email = :email");
+    $q = $conn->prepare("SELECT personID, personFName, personLName, personType, phone, streetAddress, city, USState, zipCode FROM PERSON WHERE email = :email");
     // replace the placeholder with the email
     $q->bindParam(':email',$email);
     // do the sql query and store the result in an array
@@ -78,11 +78,16 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $result = $q->fetch();
 
     // check that we got the id and name then save them to use later
-    if(isset($result['personID']) && isset($result['personFName']) && isset($result['personLName']) && isset($result['personType'])){
+    if(isset($result['personID']) && isset($result['personFName']) && isset($result['personLName']) && isset($result['personType']) && isset($result['phone']) && isset($result['streetAddress']) && isset($result['city']) && isset($result['USState']) && isset($result['zipCode'])){
       $personID = $result['personID'];
       $personFName = $result['personFName'];
       $personLName = $result['personLName'];
       $personType = $result['personType'];
+      $phone = $result['phone'];
+      $streetAddress = $result['streetAddress'];
+      $city = $result['city'];
+      $usState = $result['USState'];
+      $zipCode = $result['zipCode'];
     }
   }catch(PDOException $e) {
     echo $sql . "<br>" . $e->getMessage();
@@ -92,7 +97,7 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 <script>
   // prevent resubmission of form on refresh
     if ( window.history.replaceState ) {
-        window.history.replaceState( null, null, window.location.href );
+      window.history.replaceState( null, null, window.location.href );
     }
 </script>
 <!DOCTYPE html>
@@ -115,35 +120,15 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" ></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>
     <style>
-      .wrap {
-        width: 100%;
-        overflow:auto;
-        }
-
-      .fleft {
-        float:left; 
-        width: 50%;
-        height: 100%;
-        text-align:center;
-      }
-
-      .fright {
-        float: right;
-        height: 100%;          
-        width: 50%;
-        text-align:center;
-      }
-      .logo {
-        border-radius:5px;
-      }
-      </style>
+      <?php include 'styles/index.css'; ?>
+    </style>
   </head>
   <body>
     <div style="background-color:#FAE8E0">
     <nav class="navbar navbar-dark bg-dark">
         <div class="container-fluid" >
           <a class="navbar-brand" href="index.php" style="font-size:32px; color:#FAE8E0;">
-            <img src="DogHouse.png" alt="Logo" width="50" height="50" class="d-inline-block align-text-top logo">
+            <img src="assets/DogHouse.png" alt="Logo" width="50" height="50" class="d-inline-block align-text-top logo">
             <strong>Pet Stop</strong>
           </a>
           <span class="dropdown" style="padding-right:1%;">
@@ -151,6 +136,7 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
               <?php echo $personFName; ?>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" style="margin-right:10%;">
+              <li><a class="dropdown-item" href="index.php">Home</a></li>
               <li><a class="dropdown-item" href="acctinfo.php">Account Info</a></li>
               <li><a class="dropdown-item" href="#">Something else</a></li>
               <li><a class="dropdown-item" href="login.php">Sign Out</a></li>
@@ -161,67 +147,96 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     <h1 style="text-align:center; margin-top:5%; margin-bottom:5%;">Welcome to Pet Stop, <?php echo $personFName; ?>!</h1>
     <div class = "wrap">
       <div class = "fleft">
-        <h2>Upcoming Events</h2>
-        oo oo ah ah 
+        <h2>Previous Appointments</h2>
+        <?php
+          echo "<table style='border: solid 1px black;'>";
+          echo "<tr><th>AppointmentID</th><th>Pet Owner ID</th><th>Pet Sitter ID</th><th>Day</th> <th>Month</th> <th>Year</th> <th>Start Time</th> <th>Duration</th></tr>";
+
+          class TableRows extends RecursiveIteratorIterator {
+            function __construct($it) {
+              parent::__construct($it, self::LEAVES_ONLY);
+            }
+
+            function current() {
+              return "<td style='width:150px;border:1px solid black;'>" . parent::current(). "</td>";
+            }
+
+            function beginChildren() {
+              echo "<tr>";
+            }
+
+            function endChildren() {
+              echo "</tr>" . "\n";
+            }
+          }
+
+          try {
+              // get appointment information from database
+            if($personType == 1){
+              // this is a pet owner
+              $q = $conn->prepare("SELECT * FROM Appointment WHERE petOwner = :personID AND DATE(startTime) < CURDATE() ORDER BY startTime ASC");
+            }else{
+              // this is a pet sitter
+              $q = $conn->prepare("SELECT * FROM Appointment where petSitter = :personID AND DATE(startTime) < CURDATE() ORDER BY startTime ASC");
+            }
+            // replace the placeholder with the personID
+            $q->bindParam(':personID',$personID);
+
+            // do the sql query and store the result in an array
+            $q->execute();
+
+            // TODO:
+            // convert from personIDs to actual names (or maybe we want to do just emails or both emails and names idk?)
+            // for each appointment, get the pet list and review
+            // maybe get info for each pet in list
+            
+            $result = $q->setFetchMode(PDO::FETCH_ASSOC);
+            foreach(new TableRows(new RecursiveArrayIterator($q->fetchAll())) as $k=>$v) {
+              echo $v;
+            }
+          } catch(PDOException $e) {
+            echo "Error: " . $e->getMessage();
+          }
+          echo "</table>";
+        ?>
       </div>
       <div class = "fright">
-        <h2>Previous Events</h2>
-        happy tgivs
+        <h2>Upcoming Appointments</h2>
+        <?php
+          echo "<table style='border: solid 1px black;'>";
+          echo "<tr><th>AppointmentID</th><th>Pet Owner ID</th><th>Pet Sitter ID</th><th>Day</th> <th>Month</th> <th>Year</th> <th>Start Time</th> <th>Duration</th></tr>";
+
+          try {
+              // get appointment information from database
+            if($personType == 1){
+              // this is a pet owner
+              $q = $conn->prepare("SELECT * FROM Appointment WHERE petOwner = :personID AND DATE(startTime) >= CURDATE() ORDER BY startTime ASC");
+            }else{
+              // this is a pet sitter
+              $q = $conn->prepare("SELECT * FROM Appointment where petSitter = :personID AND DATE(startTime) >= CURDATE() ORDER BY startTime ASC");
+            }
+            // replace the placeholder with the personID
+            $q->bindParam(':personID',$personID);
+
+            // do the sql query and store the result in an array
+            $q->execute();
+
+            // TODO:
+            // convert from personIDs to actual names (or maybe we want to do just emails or both emails and names idk?)
+            // for each appointment, get the pet list and review
+            // maybe get info for each pet in list
+            $result = $q->setFetchMode(PDO::FETCH_ASSOC);
+            foreach(new TableRows(new RecursiveArrayIterator($q->fetchAll())) as $k=>$v) {
+              echo $v;
+            }
+          } catch(PDOException $e) {
+            echo "Error: " . $e->getMessage();
+          }
+          $conn = null;
+          echo "</table>";
+        ?>
       </div>
     </div>
   </div>
-<?php
-    echo "<table style='border: solid 1px black;'>";
-    echo "<tr><th>AppointmentID</th><th>Pet Owner ID</th><th>Pet Sitter ID</th><th>Day</th> <th>Month</th> <th>Year</th> <th>Start Time</th> <th>Duration</th> <th>Pets</th></tr>";
-
-    class TableRows extends RecursiveIteratorIterator {
-      function __construct($it) {
-        parent::__construct($it, self::LEAVES_ONLY);
-      }
-
-      function current() {
-        return "<td style='width:150px;border:1px solid black;'>" . parent::current(). "</td>";
-      }
-
-      function beginChildren() {
-        echo "<tr>";
-      }
-
-      function endChildren() {
-        echo "</tr>" . "\n";
-      }
-    }
-
-    try {
-        // get appointment information from database
-      if($personType == 1){
-        // this is a pet owner
-        $q = $conn->prepare("SELECT * FROM Appointment where petOwner = :personID");
-      }else{
-        // this is a pet sitter
-        $q = $conn->prepare("SELECT * FROM Appointment where petSitter = :personID");
-      }
-      // replace the placeholder with the personID
-      $q->bindParam(':personID',$personID);
-
-      // do the sql query and store the result in an array
-      $q->execute();
-      $result = $q->fetch();
-
-      // TODO:
-      // convert from personIDs to actual names (or maybe we want to do just emails or both emails and names idk?)
-      // for each appointment, get the pet list and review
-      // maybe get info for each pet in list
-      $result = $q->setFetchMode(PDO::FETCH_ASSOC);
-      foreach(new TableRows(new RecursiveArrayIterator($q->fetchAll())) as $k=>$v) {
-        echo $v;
-      }
-    } catch(PDOException $e) {
-      echo "Error: " . $e->getMessage();
-    }
-    $conn = null;
-    echo "</table>";
-    
-?>
   </body>
 </html>

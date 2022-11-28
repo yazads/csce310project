@@ -16,7 +16,7 @@
     />
     <title>Pet Stop | Sign Up</title>
   </head>
-  <body>
+  <body style="background-color:#FAE8E0">
     <?php
         session_start();
     ?>
