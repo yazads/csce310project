@@ -5,6 +5,7 @@ $username = "root";
 $password = "";
 $dbname = "petSitting";
 $newUser = $_SESSION[ 'newUser' ];
+$newPet = $_SESSION[ 'newPet' ];
 
 // connect to petsitting db
 $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
@@ -92,6 +93,39 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
   }catch(PDOException $e) {
     echo $sql . "<br>" . $e->getMessage();
   }
+
+
+  if($newPet){
+    // check if post info is set before assigning variables
+    // otherwise we get annoying warnings on refresh
+    if(isset($_POST["petname"]) && isset($_POST["species"]) && isset($_POST["requirements"])){
+      $petname = $_POST["petname"];
+      $species = $_POST["species"];
+      $requirements = $_POST["requirements"];  
+    }
+
+    // to prevent adding empty rows to the db after refreshing, only connect to db if attributes have info
+    if(!empty($petname) && !empty($species) && !empty($requirements)){
+      try {
+        
+        // prepare an sql query
+        $q = $conn->prepare("INSERT INTO PET (personID, petName, species, requirements)
+        VALUES (:personID, :petName, :species, :requirements)");
+      
+        // replace the placeholders with the info from the sign up form
+        $q->bindParam(':personID',$personID);
+        $q->bindParam(':petName',$petname);
+        $q->bindParam(':species', $species);
+        $q->bindParam(':requirements',$requirements);
+        
+        // do the sql query
+        $q->execute();
+      } catch(PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+      }
+    }
+  }
+
 ?>
 
 <script>
