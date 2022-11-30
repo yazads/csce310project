@@ -185,9 +185,9 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         <?php
           echo "<table style='border: solid 1px black;'>";
           if($personType == 1){
-            echo "<th>Pet Sitter First Name</th><th> Pet Sitter Last Name</th><th> Pet Sitter Email</th><th>Start Time</th> <th>Duration (hours) </th></tr>";
+            echo "<th>Pet Sitter First Name</th><th> Pet Sitter Last Name</th><th> Pet Sitter Email</th><th>Start Time</th> <th>Duration (hours) </th> <th>Review</th></tr>";
           }else{
-            echo "<tr><th>Pet Owner First Name</th><th>Pet Owner Last Name</th><th>Pet Owner Email</th><th>Start Time</th> <th>Duration (hours) </th></tr>";
+            echo "<tr><th>Pet Owner First Name</th><th>Pet Owner Last Name</th><th>Pet Owner Email</th><th>Start Time</th> <th>Duration (hours) </th><th>Review</th></tr>";
           }
 
           class TableRows extends RecursiveIteratorIterator {
@@ -210,18 +210,20 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
     try {
-        // get appointment information from database
+        // get past appointment information from database
       if($personType == 1){
         // this is a pet owner
-        $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration
-        FROM (appointment
+        $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
+        FROM ((appointment
         INNER JOIN person ON appointment.petSitter = person.personID) 
+        INNER JOIN review ON review.appointmentID = appointment.appointmentID)
         WHERE appointment.petOwner = :personID AND DATE(startTime) < CURDATE() ORDER BY startTime ASC");
       }else{
         // this is a pet sitter
-        $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration
-        FROM (appointment
+        $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
+        FROM ((appointment
         INNER JOIN person ON appointment.petOwner = person.personID)
+        INNER JOIN review ON review.appointmentID = appointment.appointmentID)
         WHERE appointment.petSitter = :personID AND DATE(startTime) < CURDATE() ORDER BY startTime ASC");
       }
       // replace the placeholder with the personID
@@ -231,7 +233,6 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $q->execute();
 
             // TODO:
-            // convert from personIDs to actual names (or maybe we want to do just emails or both emails and names idk?)
             // for each appointment, get the pet list and review
             // maybe get info for each pet in list
             
@@ -250,25 +251,27 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         <?php
           echo "<table style='border: solid 1px black;'>";
           if($personType == 1){
-            echo "<th>Pet Sitter First Name</th><th> Pet Sitter Last Name</th><th> Pet Sitter Email</th><th>Start Time</th> <th>Duration (hours) </th></tr>";
+            echo "<th>Pet Sitter First Name</th><th> Pet Sitter Last Name</th><th> Pet Sitter Email</th><th>Start Time</th> <th>Duration (hours) </th><th>Review</th></tr>";
           }else{
-            echo "<tr><th>Pet Owner First Name</th><th>Pet Owner Last Name</th><th>Pet Owner Email</th><th>Start Time</th> <th>Duration (hours) </th></tr>";
+            echo "<tr><th>Pet Owner First Name</th><th>Pet Owner Last Name</th><th>Pet Owner Email</th><th>Start Time</th> <th>Duration (hours) </th><th>Review</th></tr>";
           }
           
 
           try {
-              // get appointment information from database
+              // get future appointment information from database
             if($personType == 1){
               // this is a pet owner
-              $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration
-              FROM (appointment
+              $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
+              FROM ((appointment
               INNER JOIN person ON appointment.petSitter = person.personID) 
+              INNER JOIN review ON review.appointmentID = appointment.appointmentID)
               WHERE appointment.petOwner = :personID AND DATE(startTime) >= CURDATE() ORDER BY startTime ASC");
             }else{
               // this is a pet sitter
-              $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration
-              FROM (appointment
+              $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
+              FROM ((appointment
               INNER JOIN person ON appointment.petOwner = person.personID)
+              INNER JOIN review ON review.appointmentID = appointment.appointmentID)
               WHERE appointment.petSitter = :personID AND DATE(startTime) >= CURDATE() ORDER BY startTime ASC");
             }
             // replace the placeholder with the personID
@@ -278,7 +281,6 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $q->execute();
 
             // TODO:
-            // convert from personIDs to actual names (or maybe we want to do just emails or both emails and names idk?)
             // for each appointment, get the pet list and review
             // maybe get info for each pet in list
             $result = $q->setFetchMode(PDO::FETCH_ASSOC);
