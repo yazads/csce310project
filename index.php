@@ -99,40 +99,66 @@ if($newPet){
 }
 
 if($newReview){
-  // check if post info is set before assigning variables
-  // otherwise we get annoying warnings on refresh
-  if(isset($_POST['newReviewText']) && isset($_POST['appointmentID'])){
-    $newReviewText = $_POST['newReviewText'];
-    $appointmentID = $_POST['appointmentID'];
-  }
+  // see if we need to delete or update a review
+  if(isset($_POST['deleteReview'])){
+    // check if post info is set before assigning variables
+    // otherwise we get annoying warnings on refresh
+    if(isset($_POST['appointmentID'])){
+      $appointmentID = $_POST['appointmentID'];
+    }
 
-  // only update review in db if apptID and newReviewText are non-empty
-  if(!empty($newReviewText) && !empty($appointmentID)){
-    // try to update the database
-    try{
-      // use a prepared statement for the query to stop sql injections
-      $q = $conn->prepare("UPDATE REVIEW SET reviewText = :newReviewText WHERE appointmentID = :appointmentID");
-      // replace the placeholders with the apptID and text
-      $q->bindParam(':newReviewText',$newReviewText);
-      $q->bindParam(':appointmentID',$appointmentID);
-
-      // do the sql query
-      $q->execute();
-
-      // check if the # of rows affected is 0
-      if($q->rowCount() == 0){
-        // there's no review for the appt yet, so we need to insert one
-        $q = $conn->prepare("INSERT INTO REVIEW (personID, appointmentID, reviewText) VALUES (:personID, :appointmentID, :newReviewText)");
-        // replace the placeholders with the personID, apptID, and text
-        $q->bindParam(':personID',$personID);
-        $q->bindParam(':newReviewText',$newReviewText);
-        $q->bindParam(':appointmentID',$appointmentID);  
+    // if appointmentID is non-empty, attempt to delete associated review from db 
+    if(!empty($appointmentID)){
+      try{
+        // use a prepared statement for the query to stop sql injections
+        $q = $conn->prepare("DELETE FROM REVIEW WHERE appointmentID = :appointmentID");
+        // replace the placeholder with the apptID
+        $q->bindParam(':appointmentID',$appointmentID);
 
         // do the sql query
         $q->execute();
-      } 
-    }catch(PDOException $e) {
-      echo $sql . "<br>" . $e->getMessage();
+      }catch(PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+      }
+    }
+  }else{
+    // update or create the review
+
+    // check if post info is set before assigning variables
+    // otherwise we get annoying warnings on refresh
+    if(isset($_POST['newReviewText']) && isset($_POST['appointmentID'])){
+      $newReviewText = $_POST['newReviewText'];
+      $appointmentID = $_POST['appointmentID'];
+    }
+
+    // only update review in db if apptID and newReviewText are non-empty
+    if(!empty($newReviewText) && !empty($appointmentID)){
+      // try to update the database
+      try{
+        // use a prepared statement for the query to stop sql injections
+        $q = $conn->prepare("UPDATE REVIEW SET reviewText = :newReviewText WHERE appointmentID = :appointmentID");
+        // replace the placeholders with the apptID and text
+        $q->bindParam(':newReviewText',$newReviewText);
+        $q->bindParam(':appointmentID',$appointmentID);
+
+        // do the sql query
+        $q->execute();
+
+        // check if the # of rows affected is 0
+        if($q->rowCount() == 0){
+          // there's no review for the appt yet, so we need to insert one
+          $q = $conn->prepare("INSERT INTO REVIEW (personID, appointmentID, reviewText) VALUES (:personID, :appointmentID, :newReviewText)");
+          // replace the placeholders with the personID, apptID, and text
+          $q->bindParam(':personID',$personID);
+          $q->bindParam(':newReviewText',$newReviewText);
+          $q->bindParam(':appointmentID',$appointmentID);  
+
+          // do the sql query
+          $q->execute();
+        } 
+      }catch(PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+      }
     }
   }
   // set newReview back to false

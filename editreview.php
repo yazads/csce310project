@@ -190,7 +190,9 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $_SESSION['newReview'] = TRUE;
         ?>
         <br>
-        <center><button class='btn btn-outline-primary' type='submit'>Update Review</button></center>
+        <center><button class='btn btn-outline-primary' type='submit' name = 'updateReview'>Update Review</button></center>
+        <br>
+        <center><button class='btn btn-outline-primary' type='submit' style='background-color:red' name = 'deleteReview'>Delete Review</button></center>
         </form>
             
     </div>
