@@ -118,6 +118,19 @@ if($newReview){
 
       // do the sql query
       $q->execute();
+
+      // check if the # of rows affected is 0
+      if($q->rowCount() == 0){
+        // there's no review for the appt yet, so we need to insert one
+        $q = $conn->prepare("INSERT INTO REVIEW (personID, appointmentID, reviewText) VALUES (:personID, :appointmentID, :newReviewText)");
+        // replace the placeholders with the personID, apptID, and text
+        $q->bindParam(':personID',$personID);
+        $q->bindParam(':newReviewText',$newReviewText);
+        $q->bindParam(':appointmentID',$appointmentID);  
+
+        // do the sql query
+        $q->execute();
+      } 
     }catch(PDOException $e) {
       echo $sql . "<br>" . $e->getMessage();
     }
@@ -283,10 +296,10 @@ try{
           // get past appointment information from database
           if($personType == 1){
             // this is a pet owner
-            $q = $conn->prepare("SELECT appointment.appointmentID, person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
+            $q = $conn->prepare("SELECT DISTINCT appointment.appointmentID, person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
             FROM ((appointment
             INNER JOIN person ON appointment.petSitter = person.personID) 
-            INNER JOIN review ON review.appointmentID = appointment.appointmentID)
+            LEFT JOIN review ON review.appointmentID = appointment.appointmentID)
             WHERE appointment.petOwner = :personID AND DATE(startTime) < CURDATE() ORDER BY startTime ASC");
           }else{
             // this is a pet sitter
@@ -329,26 +342,24 @@ try{
         <?php
         echo "<table style='border: solid 1px black;'>";
         if($personType == 1){
-          echo "<th>Pet Sitter First Name</th><th> Pet Sitter Last Name</th><th> Pet Sitter Email</th><th>Start Time</th> <th>Duration (hours) </th><th>Review</th></tr>";
+          echo "<th>Pet Sitter First Name</th><th> Pet Sitter Last Name</th><th> Pet Sitter Email</th><th>Start Time</th> <th>Duration (hours) </th></tr>";
         }else{
-          echo "<tr><th>Pet Owner First Name</th><th>Pet Owner Last Name</th><th>Pet Owner Email</th><th>Start Time</th> <th>Duration (hours) </th><th>Review</th></tr>";
+          echo "<tr><th>Pet Owner First Name</th><th>Pet Owner Last Name</th><th>Pet Owner Email</th><th>Start Time</th> <th>Duration (hours) </th></tr>";
         }
           
         try {
           // get future appointment information from database
           if($personType == 1){
             // this is a pet owner
-            $q = $conn->prepare("SELECT appointment.appointmentID, person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
-            FROM ((appointment
+            $q = $conn->prepare("SELECT appointment.appointmentID, person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration
+            FROM (appointment
             INNER JOIN person ON appointment.petSitter = person.personID) 
-            INNER JOIN review ON review.appointmentID = appointment.appointmentID)
             WHERE appointment.petOwner = :personID AND DATE(startTime) >= CURDATE() ORDER BY startTime ASC");
           }else{
             // this is a pet sitter
-            $q = $conn->prepare("SELECT appointment.appointmentID, person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
-            FROM ((appointment
+            $q = $conn->prepare("SELECT appointment.appointmentID, person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration
+            FROM (appointment
             INNER JOIN person ON appointment.petOwner = person.personID)
-            INNER JOIN review ON review.appointmentID = appointment.appointmentID)
             WHERE appointment.petSitter = :personID AND DATE(startTime) >= CURDATE() ORDER BY startTime ASC");
           }
           // replace the placeholder with the personID

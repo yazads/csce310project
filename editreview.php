@@ -69,6 +69,8 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     // check that we got a 'reviewText' column and save its contents for later
     if(isset($result['reviewText'])){
         $reviewText = $result['reviewText'];
+    }else{
+        $reviewText = "";
     }
   }catch(PDOException $e){
     echo $sql . "<br>" . $e->getMessage();
@@ -156,10 +158,10 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         try {
             // get appointment information from database
-            $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
+            $q = $conn->prepare("SELECT DISTINCT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
             FROM ((appointment
             INNER JOIN person ON appointment.petSitter = person.personID) 
-            INNER JOIN review ON review.appointmentID = appointment.appointmentID)
+            LEFT JOIN review ON review.appointmentID = appointment.appointmentID)
             WHERE appointment.appointmentID = :appointmentID AND DATE(startTime) < CURDATE() ORDER BY startTime ASC");
         
             // replace the placeholder with the appointmentID
