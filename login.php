@@ -15,6 +15,7 @@
       crossorigin="anonymous"
     />
     <title>Pet Stop | Login</title>
+    <link rel="icon" type="image/x-icon" href="assets/DogHouse.png">
   </head>
   <body style="background-color:#FAE8E0">
     <?php
