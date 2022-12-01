@@ -30,9 +30,6 @@ CREATE TABLE IF NOT EXISTS appointment(
     appointmentID int NOT NULL AUTO_INCREMENT,
     petOwner int,
     petSitter int,
-    appointmentDay int, -- Day is also a reserved word. I found a list of them: https://dev.mysql.com/doc/refman/5.7/en/keywords.html
-    appointmentMonth int,
-    appointmentYear int,
     startTime datetime,
     duration int,
     PRIMARY KEY (appointmentID),
