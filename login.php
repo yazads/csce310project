@@ -41,6 +41,9 @@
 <?php 
     // note that we don't need to add to database when we get to index.php
     $_SESSION[ 'newUser' ] = FALSE;
+    $_SESSION[ 'newPet' ] = FALSE;
+    $_SESSION['newReview'] = FALSE;
+
     // unset email session var
     unset($_SESSION[ 'email' ]);
 ?>
