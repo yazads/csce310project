@@ -6,6 +6,7 @@ $password = "";
 $dbname = "petSitting";
 $newUser = $_SESSION[ 'newUser' ];
 $newPet = $_SESSION[ 'newPet' ];
+$newReview = $_SESSION['newReview'];
 
 // connect to petsitting db
 $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
@@ -13,26 +14,31 @@ $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 // set the PDO error mode to exception
 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-  // only add to db if we're coming from signup.php
-  if($newUser){
-    // check if post info is set before assigning variables
-    // otherwise we get annoying warnings on refresh
-    if(isset($_POST["fname"]) && isset($_POST["lname"]) && isset($_POST["email"]) && isset($_POST["phone"]) && isset($_POST["street"]) && isset($_POST["city"]) && isset($_POST["state"]) && isset($_POST["zip"]) && isset($_POST["type"])){
-      $fname = $_POST["fname"];
-      $lname = $_POST["lname"];
-      $email = $_POST["email"];
-      $phone = $_POST["phone"];
-      $street = $_POST["street"];
-      $city = $_POST["city"];
-      $usState = $_POST["state"];
-      $zip = $_POST["zip"];
-      $personType = $_POST["type"];
-    }
+/* Depending on where we're coming from, update different parts of the database:
+ *
+ * $newUser -- insert new user using POST vars fname, lname, email, phone, street, city, state, zip, type (sent from signup.php)
+ * $newPet -- insert new pet using POST vars petname, species, requirements (sent from createpet.php)
+ * $newReview -- update review using POST vars newReviewText, appointmentID (sent from editreview.php)
+*/
 
+if($newUser){
+  // check if post info is set before assigning variables
+  // otherwise we get annoying warnings on refresh
+  if(isset($_POST["fname"]) && isset($_POST["lname"]) && isset($_POST["email"]) && isset($_POST["phone"]) && isset($_POST["street"]) && isset($_POST["city"]) && isset($_POST["state"]) && isset($_POST["zip"]) && isset($_POST["type"])){
+    $fname = $_POST["fname"];
+    $lname = $_POST["lname"];
+    $email = $_POST["email"];
+    $phone = $_POST["phone"];
+    $street = $_POST["street"];
+    $city = $_POST["city"];
+    $usState = $_POST["state"];
+    $zip = $_POST["zip"];
+    $personType = $_POST["type"];
+
+    // add info to db
     // to prevent adding empty rows to the db after refreshing, only connect to db if attributes have info
     if(!empty($fname) && !empty($lname) && !empty($email) && !empty($phone) && !empty($street) && !empty($city) && !empty($usState) && !empty($zip) && !empty($personType)){
-      try {
-        
+      try {   
         // prepare an sql query
         $q = $conn->prepare("INSERT INTO PERSON (email, phone, personFName, personLName, streetAddress, city, USState, zipCode, personType)
         VALUES (:email, :phone, :fname, :lname, :street, :city, :usState, :zip, :personType)");
@@ -54,78 +60,109 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         echo $sql . "<br>" . $e->getMessage();
       }
     }
+  } 
+  // set newUser back to false
+  $_SESSION['newUser'] = FALSE;
+}
+
+if($newPet){
+  // check if post info is set before assigning variables
+  // otherwise we get annoying warnings on refresh
+  if(isset($_POST["petname"]) && isset($_POST["species"]) && isset($_POST["requirements"])){
+    $petname = $_POST["petname"];
+    $species = $_POST["species"];
+    $requirements = $_POST["requirements"];  
   }
 
-  // get personId based on email
-  if(isset($_POST['email'])){
-    $email = $_POST['email'];
+  // to prevent adding empty rows to the db after refreshing, only connect to db if attributes have info
+  if(!empty($petname) && !empty($species) && !empty($requirements)){
+    try {
+      
+      // prepare an sql query
+      $q = $conn->prepare("INSERT INTO PET (personID, petName, species, requirements)
+      VALUES (:personID, :petName, :species, :requirements)");
+    
+      // replace the placeholders with the info from the sign up form
+      $q->bindParam(':personID',$personID);
+      $q->bindParam(':petName',$petname);
+      $q->bindParam(':species', $species);
+      $q->bindParam(':requirements',$requirements);
+      
+      // do the sql query
+      $q->execute();
+    } catch(PDOException $e) {
+      echo $sql . "<br>" . $e->getMessage();
+    }
+  }
+  // set newPet back to false
+  $_SESSION['newPet'] = FALSE;
+}
+
+if($newReview){
+  // check if post info is set before assigning variables
+  // otherwise we get annoying warnings on refresh
+  if(isset($_POST['newReviewText']) && isset($_POST['appointmentID'])){
+    $newReviewText = $_POST['newReviewText'];
+    $appointmentID = $_POST['appointmentID'];
+  }
+
+  // only update review in db if apptID and newReviewText are non-empty
+  if(!empty($newReviewText) && !empty($appointmentID)){
+    // try to update the database
+    try{
+      // use a prepared statement for the query to stop sql injections
+      $q = $conn->prepare("UPDATE REVIEW SET reviewText = :newReviewText WHERE appointmentID = :appointmentID");
+      // replace the placeholders with the apptID and text
+      $q->bindParam(':newReviewText',$newReviewText);
+      $q->bindParam(':appointmentID',$appointmentID);
+
+      // do the sql query
+      $q->execute();
+    }catch(PDOException $e) {
+      echo $sql . "<br>" . $e->getMessage();
+    }
+  }
+  // set newReview back to false
+  $_SESSION['newReview'] = FALSE;
+}
+
+/* Get general info about our current user */
+if(isset($_POST['email'])){
+  $email = $_POST['email'];
     
   // if not set, set session var email to the user's email (otherwise refresh breaks the page)
   if(!isset($_SESSION[ 'email'])){
     $_SESSION[ 'email' ] = $email;
   }
-  }else{
-    $email = $_SESSION[ 'email' ];
+}else{
+  $email = $_SESSION[ 'email' ];
+}
+
+// query db for persontype, personID, and full name associated with the email
+try{
+  // prepare the query
+  $q = $conn->prepare("SELECT personID, personFName, personLName, personType, phone, streetAddress, city, USState, zipCode FROM PERSON WHERE email = :email");
+  // replace the placeholder with the email
+  $q->bindParam(':email',$email);
+  // do the sql query and store the result in an array
+  $q->execute();
+  $result = $q->fetch();
+
+  // check that we got the id and name then save them to use later
+  if(isset($result['personID']) && isset($result['personFName']) && isset($result['personLName']) && isset($result['personType']) && isset($result['phone']) && isset($result['streetAddress']) && isset($result['city']) && isset($result['USState']) && isset($result['zipCode'])){
+    $personID = $result['personID'];
+    $personFName = $result['personFName'];
+    $personLName = $result['personLName'];
+    $personType = $result['personType'];
+    $phone = $result['phone'];
+    $streetAddress = $result['streetAddress'];
+    $city = $result['city'];
+    $usState = $result['USState'];
+    $zipCode = $result['zipCode'];
   }
-
-  // query db for persontype, personID, and full name associated with the email
-  try{
-    // prepare the query
-    $q = $conn->prepare("SELECT personID, personFName, personLName, personType, phone, streetAddress, city, USState, zipCode FROM PERSON WHERE email = :email");
-    // replace the placeholder with the email
-    $q->bindParam(':email',$email);
-    // do the sql query and store the result in an array
-    $q->execute();
-    $result = $q->fetch();
-
-    // check that we got the id and name then save them to use later
-    if(isset($result['personID']) && isset($result['personFName']) && isset($result['personLName']) && isset($result['personType']) && isset($result['phone']) && isset($result['streetAddress']) && isset($result['city']) && isset($result['USState']) && isset($result['zipCode'])){
-      $personID = $result['personID'];
-      $personFName = $result['personFName'];
-      $personLName = $result['personLName'];
-      $personType = $result['personType'];
-      $phone = $result['phone'];
-      $streetAddress = $result['streetAddress'];
-      $city = $result['city'];
-      $usState = $result['USState'];
-      $zipCode = $result['zipCode'];
-    }
-  }catch(PDOException $e) {
-    echo $sql . "<br>" . $e->getMessage();
-  }
-
-
-  if($newPet){
-    // check if post info is set before assigning variables
-    // otherwise we get annoying warnings on refresh
-    if(isset($_POST["petname"]) && isset($_POST["species"]) && isset($_POST["requirements"])){
-      $petname = $_POST["petname"];
-      $species = $_POST["species"];
-      $requirements = $_POST["requirements"];  
-    }
-
-    // to prevent adding empty rows to the db after refreshing, only connect to db if attributes have info
-    if(!empty($petname) && !empty($species) && !empty($requirements)){
-      try {
-        
-        // prepare an sql query
-        $q = $conn->prepare("INSERT INTO PET (personID, petName, species, requirements)
-        VALUES (:personID, :petName, :species, :requirements)");
-      
-        // replace the placeholders with the info from the sign up form
-        $q->bindParam(':personID',$personID);
-        $q->bindParam(':petName',$petname);
-        $q->bindParam(':species', $species);
-        $q->bindParam(':requirements',$requirements);
-        
-        // do the sql query
-        $q->execute();
-      } catch(PDOException $e) {
-        echo $sql . "<br>" . $e->getMessage();
-      }
-    }
-  }
-
+}catch(PDOException $e) {
+  echo $sql . "<br>" . $e->getMessage();
+}
 ?>
 
 <script>
@@ -196,7 +233,17 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             }
 
             function current() {
-              return "<td style='width:150px;border:1px solid black;'>" . parent::current(). "</td>";
+              if(parent::key() == 'appointmentID'){
+                // don't actually display the appointment id, just save it for later in case they want to change the review
+                $rowAppointmentID = parent::current();
+                return "<form action='editreview.php' method='post' id='editReview'><input type='hidden' name='appointmentID' value='".$rowAppointmentID."'>";
+              }else if (parent::key() == 'reviewText'){
+                // return the data plus a button to change the review
+                return "<td style='width:150px;border:1px solid black;'> <center><button class='btn btn-outline-primary' type='submit' >Edit Review</button></center></form>" . parent::current(). "</td>";
+              }else{
+                // just return the data
+                return "<td style='width:150px;border:1px solid black;'>" . parent::current(). "</td>";
+              }
             }
 
             function beginChildren() {
@@ -206,21 +253,20 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             function endChildren() {
               echo "</tr>" . "\n";
             }
-      
     }
 
     try {
         // get past appointment information from database
       if($personType == 1){
         // this is a pet owner
-        $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
+        $q = $conn->prepare("SELECT appointment.appointmentID, person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
         FROM ((appointment
         INNER JOIN person ON appointment.petSitter = person.personID) 
         INNER JOIN review ON review.appointmentID = appointment.appointmentID)
         WHERE appointment.petOwner = :personID AND DATE(startTime) < CURDATE() ORDER BY startTime ASC");
       }else{
         // this is a pet sitter
-        $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
+        $q = $conn->prepare("SELECT appointment.appointmentID, person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
         FROM ((appointment
         INNER JOIN person ON appointment.petOwner = person.personID)
         INNER JOIN review ON review.appointmentID = appointment.appointmentID)
@@ -261,14 +307,14 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
               // get future appointment information from database
             if($personType == 1){
               // this is a pet owner
-              $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
+              $q = $conn->prepare("SELECT appointment.appointmentID, person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
               FROM ((appointment
               INNER JOIN person ON appointment.petSitter = person.personID) 
               INNER JOIN review ON review.appointmentID = appointment.appointmentID)
               WHERE appointment.petOwner = :personID AND DATE(startTime) >= CURDATE() ORDER BY startTime ASC");
             }else{
               // this is a pet sitter
-              $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
+              $q = $conn->prepare("SELECT appointment.appointmentID, person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
               FROM ((appointment
               INNER JOIN person ON appointment.petOwner = person.personID)
               INNER JOIN review ON review.appointmentID = appointment.appointmentID)
