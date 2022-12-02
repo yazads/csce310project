@@ -1,13 +1,5 @@
 <?php
-session_start();
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "petSitting";
-$newUser = $_SESSION[ 'newUser' ];
-$newPet = $_SESSION[ 'newPet' ];
-$newReview = $_SESSION['newReview'];
-
+require 'assets/sessionStart.php';
 // connect to petsitting db
 $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 
