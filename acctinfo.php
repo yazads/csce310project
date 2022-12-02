@@ -51,7 +51,6 @@ if($newPet){
 if($editPet){
   // see if we need to delete or update a pet
   if(isset($_POST['deletePet'])){
-    // TODO: add triggers to db, to delete associated appts b4 deleting pet
     // check if post info is set before assigning variables
     // otherwise we get annoying warnings on refresh
     if(isset($_POST['petID'])){
