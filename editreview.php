@@ -14,74 +14,74 @@ $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 // set the PDO error mode to exception
 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-  // get personId based on email
-  if(isset($_POST['email'])){
-    $email = $_POST['email'];
+// get personId based on email
+if(isset($_POST['email'])){
+  $email = $_POST['email'];
     
   // if not set, set session var email to the user's email (otherwise refresh breaks the page)
   if(!isset($_SESSION[ 'email'])){
     $_SESSION[ 'email' ] = $email;
   }
-  }else{
-    $email = $_SESSION[ 'email' ];
-  }
-   // query db for first name associated with the email
-   try{
-    // prepare the query
-    $q = $conn->prepare("SELECT personID, personFName FROM PERSON WHERE email = :email");
-    // replace the placeholder with the email
-    $q->bindParam(':email',$email);
-    // do the sql query and store the result in an array
-    $q->execute();
-    $result = $q->fetch();
+}else{
+  $email = $_SESSION[ 'email' ];
+}
+// query db for first name associated with the email
+try{
+  // prepare the query
+  $q = $conn->prepare("SELECT personID, personFName FROM PERSON WHERE email = :email");
+  // replace the placeholder with the email
+  $q->bindParam(':email',$email);
+  // do the sql query and store the result in an array
+  $q->execute();
+  $result = $q->fetch();
 
-    // check that we got the id and name then save them to use later
-    if(isset($result['personFName']) && isset($result['personFName'])){
-      $personFName = $result['personID'];
-      $personFName = $result['personFName'];
-    }
-  }catch(PDOException $e) {
-    echo $sql . "<br>" . $e->getMessage();
+  // check that we got the id and name then save them to use later
+  if(isset($result['personFName']) && isset($result['personFName'])){
+    $personID = $result['personID'];
+    $personFName = $result['personFName'];
   }
+}catch(PDOException $e) {
+  echo $sql . "<br>" . $e->getMessage();
+}
 
-  // get appointmentID passed on from previous page
-  if(isset($_POST['appointmentID'])){
-    $appointmentID = $_POST['appointmentID'];
+// get appointmentID passed on from previous page
+if(isset($_POST['appointmentID'])){
+  $appointmentID = $_POST['appointmentID'];
     
   // if not set, set session var appointmentID to the appointmentID (otherwise refresh breaks the page)
   if(!isset($_SESSION[ 'appointmentID'])){
     $_SESSION[ 'appointmentID' ] = $appointmentID;
   }
-  }else{
-    $appointmentID = $_SESSION[ 'appointmentID' ];
-  }
+}else{
+  $appointmentID = $_SESSION[ 'appointmentID' ];
+}
 
-  // get review text from db
-  try{
-    // use a prepared statement for the query
-    $q = $conn->prepare("SELECT reviewText FROM review WHERE appointmentID = :appointmentID");
-    // replace the placeholder with the appointmentID
-    $q->bindParam(':appointmentID',$appointmentID);
-    // run the query and store the result
-    $q->execute();
-    $result = $q->fetch();
+// get review text from db
+try{
+  // use a prepared statement for the query
+  $q = $conn->prepare("SELECT reviewText FROM review WHERE appointmentID = :appointmentID");
+  // replace the placeholder with the appointmentID
+  $q->bindParam(':appointmentID',$appointmentID);
+  // run the query and store the result
+  $q->execute();
+  $result = $q->fetch();
     
-    // check that we got a 'reviewText' column and save its contents for later
-    if(isset($result['reviewText'])){
-        $reviewText = $result['reviewText'];
-    }else{
-        $reviewText = "";
-    }
-  }catch(PDOException $e){
-    echo $sql . "<br>" . $e->getMessage();
+  // check that we got a 'reviewText' column and save its contents for later
+  if(isset($result['reviewText'])){
+    $reviewText = $result['reviewText'];
+  }else{
+    $reviewText = "";
   }
+}catch(PDOException $e){
+  echo $sql . "<br>" . $e->getMessage();
+}
 ?>
 
 <script>
-  // prevent resubmission of form on refresh
-    if ( window.history.replaceState ) {
-        window.history.replaceState( null, null, window.location.href );
-    }
+// prevent resubmission of form on refresh
+if ( window.history.replaceState ) {
+  window.history.replaceState( null, null, window.location.href );
+}
 </script>
 <!DOCTYPE html>
 <html lang="en">
@@ -153,8 +153,6 @@ $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             function endChildren() {
               echo "</tr>" . "\n";
             }
-      
-        
 
         try {
             // get appointment information from database

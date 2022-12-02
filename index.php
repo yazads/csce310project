@@ -205,10 +205,10 @@ try{
 ?>
 
 <script>
-  // prevent resubmission of form on refresh
-    if ( window.history.replaceState ) {
-      window.history.replaceState( null, null, window.location.href );
-    }
+// prevent resubmission of form on refresh
+if ( window.history.replaceState ) {
+  window.history.replaceState( null, null, window.location.href );
+}
 </script>
 <!DOCTYPE html>
 <html lang="en">
