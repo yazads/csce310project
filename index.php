@@ -65,39 +65,6 @@ if($newUser){
   $_SESSION['newUser'] = FALSE;
 }
 
-if($newPet){
-  // check if post info is set before assigning variables
-  // otherwise we get annoying warnings on refresh
-  if(isset($_POST["petname"]) && isset($_POST["species"]) && isset($_POST["requirements"])){
-    $petname = $_POST["petname"];
-    $species = $_POST["species"];
-    $requirements = $_POST["requirements"];  
-  }
-
-  // to prevent adding empty rows to the db after refreshing, only connect to db if attributes have info
-  if(!empty($petname) && !empty($species) && !empty($requirements)){
-    try {
-      
-      // prepare an sql query
-      $q = $conn->prepare("INSERT INTO PET (personID, petName, species, requirements)
-      VALUES (:personID, :petName, :species, :requirements)");
-    
-      // replace the placeholders with the info from the sign up form
-      $q->bindParam(':personID',$personID);
-      $q->bindParam(':petName',$petname);
-      $q->bindParam(':species', $species);
-      $q->bindParam(':requirements',$requirements);
-      
-      // do the sql query
-      $q->execute();
-    } catch(PDOException $e) {
-      echo $sql . "<br>" . $e->getMessage();
-    }
-  }
-  // set newPet back to false
-  $_SESSION['newPet'] = FALSE;
-}
-
 if($newReview){
   // see if we need to delete or update a review
   if(isset($_POST['deleteReview'])){
@@ -164,44 +131,7 @@ if($newReview){
   // set newReview back to false
   $_SESSION['newReview'] = FALSE;
 }
-
-/* Get general info about our current user */
-if(isset($_POST['email'])){
-  $email = $_POST['email'];
-    
-  // if not set, set session var email to the user's email (otherwise refresh breaks the page)
-  if(!isset($_SESSION[ 'email'])){
-    $_SESSION[ 'email' ] = $email;
-  }
-}else{
-  $email = $_SESSION[ 'email' ];
-}
-
-// query db for persontype, personID, and full name associated with the email
-try{
-  // prepare the query
-  $q = $conn->prepare("SELECT personID, personFName, personLName, personType, phone, streetAddress, city, USState, zipCode FROM PERSON WHERE email = :email");
-  // replace the placeholder with the email
-  $q->bindParam(':email',$email);
-  // do the sql query and store the result in an array
-  $q->execute();
-  $result = $q->fetch();
-
-  // check that we got the id and name then save them to use later
-  if(isset($result['personID']) && isset($result['personFName']) && isset($result['personLName']) && isset($result['personType']) && isset($result['phone']) && isset($result['streetAddress']) && isset($result['city']) && isset($result['USState']) && isset($result['zipCode'])){
-    $personID = $result['personID'];
-    $personFName = $result['personFName'];
-    $personLName = $result['personLName'];
-    $personType = $result['personType'];
-    $phone = $result['phone'];
-    $streetAddress = $result['streetAddress'];
-    $city = $result['city'];
-    $usState = $result['USState'];
-    $zipCode = $result['zipCode'];
-  }
-}catch(PDOException $e) {
-  echo $sql . "<br>" . $e->getMessage();
-}
+require 'assets/getUserInfo.php';
 ?>
 
 <script>

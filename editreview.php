@@ -14,35 +14,7 @@ $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 // set the PDO error mode to exception
 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-// get personId based on email
-if(isset($_POST['email'])){
-  $email = $_POST['email'];
-    
-  // if not set, set session var email to the user's email (otherwise refresh breaks the page)
-  if(!isset($_SESSION[ 'email'])){
-    $_SESSION[ 'email' ] = $email;
-  }
-}else{
-  $email = $_SESSION[ 'email' ];
-}
-// query db for first name associated with the email
-try{
-  // prepare the query
-  $q = $conn->prepare("SELECT personID, personFName FROM PERSON WHERE email = :email");
-  // replace the placeholder with the email
-  $q->bindParam(':email',$email);
-  // do the sql query and store the result in an array
-  $q->execute();
-  $result = $q->fetch();
-
-  // check that we got the id and name then save them to use later
-  if(isset($result['personFName']) && isset($result['personFName'])){
-    $personID = $result['personID'];
-    $personFName = $result['personFName'];
-  }
-}catch(PDOException $e) {
-  echo $sql . "<br>" . $e->getMessage();
-}
+require 'assets/getUserInfo.php';
 
 // get appointmentID passed on from previous page
 if(isset($_POST['appointmentID'])){
