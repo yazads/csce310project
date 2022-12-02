@@ -14,7 +14,45 @@ $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 // set the PDO error mode to exception
 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-// update the db if we're coming from editpet.php or createpet.php
+/* Get general info about our current user */
+if(isset($_POST['email'])){
+  $email = $_POST['email'];
+    
+  // if not set, set session var email to the user's email (otherwise refresh breaks the page)
+  if(!isset($_SESSION[ 'email'])){
+    $_SESSION[ 'email' ] = $email;
+  }
+}else{
+  $email = $_SESSION[ 'email' ];
+}
+
+// query db for persontype, personID, and full name associated with the email
+try{
+  // prepare the query
+  $q = $conn->prepare("SELECT personID, personFName, personLName, personType, phone, streetAddress, city, USState, zipCode FROM PERSON WHERE email = :email");
+  // replace the placeholder with the email
+  $q->bindParam(':email',$email);
+  // do the sql query and store the result in an array
+  $q->execute();
+  $result = $q->fetch();
+
+  // check that we got the id and name then save them to use later
+  if(isset($result['personID']) && isset($result['personFName']) && isset($result['personLName']) && isset($result['personType']) && isset($result['phone']) && isset($result['streetAddress']) && isset($result['city']) && isset($result['USState']) && isset($result['zipCode'])){
+    $personID = $result['personID'];
+    $personFName = $result['personFName'];
+    $personLName = $result['personLName'];
+    $personType = $result['personType'];
+    $phone = $result['phone'];
+    $streetAddress = $result['streetAddress'];
+    $city = $result['city'];
+    $usState = $result['USState'];
+    $zipCode = $result['zipCode'];
+  }
+}catch(PDOException $e) {
+  echo $sql . "<br>" . $e->getMessage();
+}
+
+/* update the db if we're coming from editpet.php or createpet.php */
 if($newPet){
   // check if post info is set before assigning variables
   // otherwise we get annoying warnings on refresh
@@ -27,7 +65,6 @@ if($newPet){
   // to prevent adding empty rows to the db after refreshing, only connect to db if attributes have info
   if(!empty($petname) && !empty($species) && !empty($requirements)){
     try {
-      
       // prepare an sql query
       $q = $conn->prepare("INSERT INTO PET (personID, petName, species, requirements)
       VALUES (:personID, :petName, :species, :requirements)");
@@ -105,44 +142,6 @@ if($editPet){
   // set editPet back to false
   $_SESSION['editPet'] = FALSE;
 }
-
-/* Get general info about our current user */
-if(isset($_POST['email'])){
-  $email = $_POST['email'];
-    
-  // if not set, set session var email to the user's email (otherwise refresh breaks the page)
-  if(!isset($_SESSION[ 'email'])){
-    $_SESSION[ 'email' ] = $email;
-  }
-}else{
-  $email = $_SESSION[ 'email' ];
-}
-
-// query db for persontype, personID, and full name associated with the email
-try{
-  // prepare the query
-  $q = $conn->prepare("SELECT personID, personFName, personLName, personType, phone, streetAddress, city, USState, zipCode FROM PERSON WHERE email = :email");
-  // replace the placeholder with the email
-  $q->bindParam(':email',$email);
-  // do the sql query and store the result in an array
-  $q->execute();
-  $result = $q->fetch();
-
-  // check that we got the id and name then save them to use later
-  if(isset($result['personID']) && isset($result['personFName']) && isset($result['personLName']) && isset($result['personType']) && isset($result['phone']) && isset($result['streetAddress']) && isset($result['city']) && isset($result['USState']) && isset($result['zipCode'])){
-    $personID = $result['personID'];
-    $personFName = $result['personFName'];
-    $personLName = $result['personLName'];
-    $personType = $result['personType'];
-    $phone = $result['phone'];
-    $streetAddress = $result['streetAddress'];
-    $city = $result['city'];
-    $usState = $result['USState'];
-    $zipCode = $result['zipCode'];
-  }
-}catch(PDOException $e) {
-  echo $sql . "<br>" . $e->getMessage();
-}
 ?>
 
 <script>
@@ -201,7 +200,7 @@ if ( window.history.replaceState ) {
             <h2>My Pets</h2>
             <br></br>
             <?php
-            echo "<table style='border: solid 1px black;'>";
+            echo "<center><table style='border: solid 1px black;'>";
             echo "<th>Pet Name</th> <th>Species</th> <th>Requirements</th> <th>Customize</th></tr>";
 
             class TableRows extends RecursiveIteratorIterator {
@@ -273,7 +272,7 @@ if ( window.history.replaceState ) {
             } catch(PDOException $e) {
               echo "Error: " . $e->getMessage();
             }
-            echo "</table>";
+            echo "</table> </center>";
             ?>
             <br></br>
             <a href="createpet.php"><button type="button" class="btn btn-outline-primary">Add New Pet</button></a>
