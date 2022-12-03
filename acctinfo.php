@@ -1,6 +1,8 @@
 <?php
 require 'assets/sessionStart.php';
 require 'assets/getUserInfo.php';
+require 'assets/head.php';
+require 'assets/navbar.php';
 
 /* update the db if we're coming from editpet.php or createpet.php */
 if($newPet){
@@ -93,40 +95,6 @@ if($editPet){
   $_SESSION['editPet'] = FALSE;
 }
 ?>
-
-<script>
-// prevent resubmission of form on refresh
-if ( window.history.replaceState ) {
-  window.history.replaceState( null, null, window.location.href );
-}
-</script>
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <!-- Bootstrap CSS -->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
-      integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
-      crossorigin="anonymous"
-    />
-    <title>Pet Stop | Account</title>
-    <link rel="icon" type="image/x-icon" href="assets/DogHouse.png">
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" ></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>
-    <style>
-     <?php include 'styles/acctinfo.css'; ?>
-    </style>
-  </head>
-  <body>
-    <div style="background-color:#FAE8E0">
-    <?php require 'assets/navbar.php' ?>
     <div class = "wrap">
             <?php if($personType == 1)require 'assets/petTable.php';?>
         <div <?php if($personType == 1) echo "class='fright'";?>>

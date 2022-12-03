@@ -1,26 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <!-- Bootstrap CSS -->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
-      integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
-      crossorigin="anonymous"
-    />
-    <title>Pet Stop | Sign Up</title>
-    <link rel="icon" type="image/x-icon" href="assets/DogHouse.png">
-  </head>
-  <body style="background-color:#FAE8E0">
-    <?php
-        session_start();
-    ?>
+<?php
+session_start();
+require 'assets/head.php';
+?>
     <div style="margin-top:1%; margin-left:95%;">
         <a href="login.php"><button type="button" class="btn btn-outline-primary">Back</button></a>
     </div>    
