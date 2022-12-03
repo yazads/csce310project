@@ -47,20 +47,10 @@ CREATE TABLE IF NOT EXISTS review(
     FOREIGN KEY (appointmentID) REFERENCES appointment(appointmentID)
     );
 
--- for pet-review and pet-appointment, we can either have a 
--- separate auto-incremented primary key or we can do a composite
--- primary key composed of pet_id and review/appointment_id 
+-- for pet-appointment, we can either have a separate 
+-- auto-incremented primary key or we can do a composite
+-- primary key composed of pet_id and appointment_id 
 -- I left the former implementation commented out
-
-CREATE TABLE IF NOT EXISTS petReview(
---    petReviewID int NOT NULL AUTO_INCREMENT,
-    petID int,
-    reviewID int,
---    PRIMARY KEY (petReviewID),
-    PRIMARY KEY (petID, reviewID),
-    FOREIGN KEY (petID) REFERENCES pet(petID),
-    FOREIGN KEY (reviewID) REFERENCES review(reviewID)
-    );
 
 CREATE TABLE IF NOT EXISTS petAppointment(
 --    petAppointmentID int NOT NULL AUTO_INCREMENT,
