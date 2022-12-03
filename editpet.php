@@ -79,77 +79,7 @@ if ( window.history.replaceState ) {
         </div>
         <div style="margin-right:30%; margin-left:30%;">
         <!-- Table of pet details to give user a frame of reference for which pet they're editing -->
-        <?php
-        echo "<center><table style='border: solid 1px black;'>";
-        echo "<th>Pet Name</th><th> Species</th><th> Requirements</th></tr>";
-
-        class TableRows extends RecursiveIteratorIterator {
-          function __construct($it) {
-            parent::__construct($it, self::LEAVES_ONLY);
-          }
-
-          function current() {
-            $curVal = parent::current();
-            if(parent::key() == 'species'){
-              /* convert from int to species such that:
-               * 1 = dog
-               * 2 = cat
-               * 3 = fish
-               * 4 = bird
-               * 5 = monkey
-               * 6 = other
-               */
-              switch($curVal){
-                case '1':
-                  $curVal = 'Dog';
-                  break;
-                case '2':
-                  $curVal = 'Cat';
-                  break;
-                case '3':
-                  $curVal = 'Fish';
-                  break;
-                case '4':
-                  $curVal = 'Bird';
-                  break;
-                case '5':
-                  $curVal = 'Monkey';
-                  break;
-                default:
-                  $curVal = 'Other';
-                  break;
-              }
-            }
-            return "<td style='width:150px;border:1px solid black;'>" . $curVal. "</td>";
-          }
-
-          function beginChildren() {
-            echo "<tr>";
-          }
-  
-          function endChildren() {
-          echo "</tr>" . "\n";
-          }
-        }
-        try {
-          // get appointment information from database
-          $q = $conn->prepare("SELECT petName, species, requirements FROM pet WHERE petID = :petID");
-        
-          // replace the placeholder with the petID
-          $q->bindParam('petID',$petID);
-
-          // do the sql query and store the result in an array
-          $q->execute();
-                
-          $result = $q->setFetchMode(PDO::FETCH_ASSOC);
-          foreach(new TableRows(new RecursiveArrayIterator($q->fetchAll())) as $k=>$v) {
-            echo $v;
-          }
-        } catch(PDOException $e) {
-          echo "Error: " . $e->getMessage();
-        }
-        echo "</table></center>";
-        ?>
+        <?php require 'assets/petTable.php'; ?>
         <br><br>
             <!-- Form for user to edit their pet -->
             <form action="acctinfo.php" method="post">

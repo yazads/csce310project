@@ -72,50 +72,8 @@ if ( window.history.replaceState ) {
         <!-- display appointment details to give the user a frame of reference for what to write in their review -->
         <h2> Appointment Details </h2>
         <?php
-        echo "<center><table style='border: solid 1px black;'>";
-        echo "<th>Pet Sitter First Name</th><th> Pet Sitter Last Name</th><th> Pet Sitter Email</th><th>Start Time</th> <th>Duration (hours) </th> <th>Previous Review</th></tr>";
-
-        class TableRows extends RecursiveIteratorIterator {
-            function __construct($it) {
-              parent::__construct($it, self::LEAVES_ONLY);
-            }
-
-            function current() {
-                return "<td style='width:150px;border:1px solid black;'>" . parent::current(). "</td>";
-            }
-              
-            }
-
-            function beginChildren() {
-              echo "<tr>";
-            }
-
-            function endChildren() {
-              echo "</tr>" . "\n";
-            }
-
-        try {
-            // get appointment information from database
-            $q = $conn->prepare("SELECT DISTINCT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
-            FROM ((appointment
-            INNER JOIN person ON appointment.petSitter = person.personID) 
-            LEFT JOIN review ON review.appointmentID = appointment.appointmentID)
-            WHERE appointment.appointmentID = :appointmentID AND DATE(startTime) < CURDATE() ORDER BY startTime ASC");
-        
-            // replace the placeholder with the appointmentID
-            $q->bindParam(':appointmentID',$appointmentID);
-
-            // do the sql query and store the result in an array
-            $q->execute();
-                
-            $result = $q->setFetchMode(PDO::FETCH_ASSOC);
-            foreach(new TableRows(new RecursiveArrayIterator($q->fetchAll())) as $k=>$v) {
-                echo $v;
-            }
-        } catch(PDOException $e) {
-            echo "Error: " . $e->getMessage();
-        }
-        echo "</table></center>";
+        $futureAppointments = FALSE;
+        require 'assets/appointmentTable.php';
         ?>
 
         <!-- form to update review -->

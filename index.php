@@ -4,7 +4,6 @@ require 'assets/sessionStart.php';
 /* Depending on where we're coming from, update different parts of the database:
  *
  * $newUser -- insert new user using POST vars fname, lname, email, phone, street, city, state, zip, type (sent from signup.php)
- * $newPet -- insert new pet using POST vars petname, species, requirements (sent from createpet.php)
  * $newReview -- update review using POST vars newReviewText, appointmentID (sent from editreview.php)
 */
 
@@ -157,153 +156,15 @@ if ( window.history.replaceState ) {
     <h1 style="text-align:center; margin-top:5%; margin-bottom:5%;">Welcome to Pet Stop, <?php echo $personFName; ?>!</h1>
     <div class = "wrap">
       <div class = "fleft">
+        <?php $futureAppointments = FALSE; ?>
         <h2>Previous Appointments</h2>
-        <?php
-        echo "<table style='border: solid 1px black;'>";
-        if($personType == 1){
-          echo "<th>Pet Sitter First Name</th><th> Pet Sitter Last Name</th><th> Pet Sitter Email</th><th>Start Time</th> <th>Duration (hours) </th> <th>Review</th></tr>";
-        }else{
-          echo "<tr><th>Pet Owner First Name</th><th>Pet Owner Last Name</th><th>Pet Owner Email</th><th>Start Time</th> <th>Duration (hours) </th><th>Review</th></tr>";
-        }
-
-        // version of table rows that does not have button to edit reviews (to be used for pet sitters and future appointments)
-        class TableRows extends RecursiveIteratorIterator {
-          function __construct($it) {
-            parent::__construct($it, self::LEAVES_ONLY);
-          }
-
-          function current() {
-            if(!(parent::key() == 'appointmentID')){
-              // only display info when the current attribute is NOT appointmentID
-              return "<td style='width:150px;border:1px solid black;'>" . parent::current(). "</td>";
-            }
-          }
-
-          function beginChildren() {
-            echo "<tr>";
-          }
-
-          function endChildren() {
-            echo "</tr>" . "\n";
-          }
-        }
-
-        // version of table rows that has a button to edit reviews (only for past appts of pet owners)
-        class TableRowsButtons extends RecursiveIteratorIterator {
-          function __construct($it) {
-            parent::__construct($it, self::LEAVES_ONLY);
-          }
-
-          function current() {
-            if(parent::key() == 'appointmentID'){
-              // don't actually display the appointment id, just save it for later in case they want to change the review
-              $rowAppointmentID = parent::current();
-              return "<form action='editreview.php' method='post' id='editReview'><input type='hidden' name='appointmentID' value='".$rowAppointmentID."'>";
-            }else if (parent::key() == 'reviewText'){
-              // return the data plus a button to change the review
-              return "<td style='width:150px;border:1px solid black;'> <center><button class='btn btn-outline-primary' type='submit' >Edit Review</button></center></form>" . parent::current(). "</td>";
-            }else{
-              // just return the data
-              return "<td style='width:150px;border:1px solid black;'>" . parent::current(). "</td>";
-            }
-          }
-
-          function beginChildren() {
-            echo "<tr>";
-          }
-
-          function endChildren() {
-            echo "</tr>" . "\n";
-          }
-        }
-
-        try {
-          // get past appointment information from database
-          if($personType == 1){
-            // this is a pet owner
-            $q = $conn->prepare("SELECT DISTINCT appointment.appointmentID, person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
-            FROM ((appointment
-            INNER JOIN person ON appointment.petSitter = person.personID) 
-            LEFT JOIN review ON review.appointmentID = appointment.appointmentID)
-            WHERE appointment.petOwner = :personID AND DATE(startTime) < CURDATE() ORDER BY startTime ASC");
-          }else{
-            // this is a pet sitter
-            $q = $conn->prepare("SELECT appointment.appointmentID, person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
-            FROM ((appointment
-            INNER JOIN person ON appointment.petOwner = person.personID)
-            INNER JOIN review ON review.appointmentID = appointment.appointmentID)
-            WHERE appointment.petSitter = :personID AND DATE(startTime) < CURDATE() ORDER BY startTime ASC");
-          }
-          // replace the placeholder with the personID
-          $q->bindParam(':personID',$personID);
-
-          // do the sql query and store the result in an array
-          $q->execute();
-
-          // TODO:
-          // for each appointment, get the pet list and maybe get info for each pet in list
-            
-          $result = $q->setFetchMode(PDO::FETCH_ASSOC);
-          // print out the table of past appts, w/ or w/o edit buttons, depending on person type
-          if($personType == 1){
-            // pet owners get edit review buttons
-            foreach(new TableRowsButtons(new RecursiveArrayIterator($q->fetchAll())) as $k=>$v) {
-              echo $v;
-            }
-          }else{
-            // pet sitters can't edit reviews
-            foreach(new TableRows(new RecursiveArrayIterator($q->fetchAll())) as $k=>$v) {
-              echo $v;
-            }
-          }
-        } catch(PDOException $e) {
-          echo "Error: " . $e->getMessage();
-        }
-        echo "</table>";
-        ?>
+        <?php require 'assets/appointmentTable.php'; ?>
       </div>
       <div class = "fright">
         <h2>Upcoming Appointments</h2>
         <?php
-        echo "<table style='border: solid 1px black;'>";
-        if($personType == 1){
-          echo "<th>Pet Sitter First Name</th><th> Pet Sitter Last Name</th><th> Pet Sitter Email</th><th>Start Time</th> <th>Duration (hours) </th></tr>";
-        }else{
-          echo "<tr><th>Pet Owner First Name</th><th>Pet Owner Last Name</th><th>Pet Owner Email</th><th>Start Time</th> <th>Duration (hours) </th></tr>";
-        }
-          
-        try {
-          // get future appointment information from database
-          if($personType == 1){
-            // this is a pet owner
-            $q = $conn->prepare("SELECT appointment.appointmentID, person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration
-            FROM (appointment
-            INNER JOIN person ON appointment.petSitter = person.personID) 
-            WHERE appointment.petOwner = :personID AND DATE(startTime) >= CURDATE() ORDER BY startTime ASC");
-          }else{
-            // this is a pet sitter
-            $q = $conn->prepare("SELECT appointment.appointmentID, person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration
-            FROM (appointment
-            INNER JOIN person ON appointment.petOwner = person.personID)
-            WHERE appointment.petSitter = :personID AND DATE(startTime) >= CURDATE() ORDER BY startTime ASC");
-          }
-          // replace the placeholder with the personID
-          $q->bindParam(':personID',$personID);
-
-          // do the sql query and store the result in an array
-          $q->execute();
-
-          // TODO:
-          // for each appointment, get the pet list and get info for each pet in list
-          $result = $q->setFetchMode(PDO::FETCH_ASSOC);
-          foreach(new TableRows(new RecursiveArrayIterator($q->fetchAll())) as $k=>$v) {
-            echo $v;
-          }
-        } catch(PDOException $e) {
-          echo "Error: " . $e->getMessage();
-        }
-        $conn = null;
-        echo "</table>";
+        $futureAppointments = TRUE;
+        require 'assets/appointmentTable.php';
         ?>
       </div>
     </div>
