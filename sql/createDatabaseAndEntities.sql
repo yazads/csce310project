@@ -4,6 +4,7 @@ USE petSitting;
 
 CREATE TABLE IF NOT EXISTS person( -- user is a reserved word :(
     personID int NOT NULL AUTO_INCREMENT,
+    passphrase varchar(65535),
     email varchar(65535),
     phone int,
     personFName varchar(65535),
@@ -19,7 +20,7 @@ CREATE TABLE IF NOT EXISTS person( -- user is a reserved word :(
 CREATE TABLE IF NOT EXISTS pet(
     petID int NOT NULL AUTO_INCREMENT,
     personID int,
-    petName varchar(65535), -- apparently Name is also a reserved word in SQL
+    petName varchar(65535), -- apparently Name is also a reserved word in SQL.  I found a list of them: https://dev.mysql.com/doc/refman/5.7/en/keywords.html
     species int,
     requirements varchar(65535),
     PRIMARY KEY (petID),
