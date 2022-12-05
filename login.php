@@ -1,6 +1,7 @@
 <?php
 session_start();
 require 'assets/head.php';
+
 ?>
         <center style="margin-top:3%; margin-bottom:3%;"> <img src="assets/Pet_Stop.png" alt="Logo" width="250" height="250" class="d-inline-block align-text-top" style="border-radius: 40px;"> </center>
     </div>
@@ -14,8 +15,7 @@ require 'assets/head.php';
         <div class="input-group mb-3">
             <span class="input-group-text" id="basic-addon1">Password</span>
             <input type="password" class="form-control" placeholder="Password" aria-label="Username" aria-describedby="basic-addon1" name="pass" required>
-        </div>
-      
+        </div>      
     </div>
       <center style="margin-bottom:10px;"><a href="index.php"><button type="Submit" class="btn btn-outline-primary">Log In</button></a></center>
 </form>

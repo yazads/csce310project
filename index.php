@@ -20,64 +20,6 @@ if(isset($_POST["pass"])){
   $pass = $_POST["pass"];
 }
 
-// echo $pass;
-
-$passphrase = '';
-
-// try{
-//   $q = $conn->prepare("SELECT passphrase FROM PERSON WHERE email = :email");
-//   $q->bindParam(':email',$email);
-//   $q->execute();
-//   $passresult = $q->fetchAll();
-
-//   if(isset($passresult['passphrase'])){
-//     $passphrase = $passresult['passphrase'];
-//   }
-//   else{
-//     $passphrase = 'not working';
-//   }
-
-//   echo 'DB password = ', $passphrase;
-//   echo "\r\n";
-//   echo 'Site password = ', $pass;
-
-// }
-// catch(PDOException $e) {
-//   echo $sql . "<br>" . $e->getMessage();
-// }
-
-
-
-
-// if($pass === $passphrase){
-//   header('Location: login.php');
-// }
-
-// echo $result['passphrase'];
-
-// if(!empty($pass)){
-//   try{
-
-//     echo $pass;
-//     $q = $conn->prepare("SELECT passphrase FROM PERSON WHERE email = :email");
-//     $q->bindParam(':email',$email);
-//     $q->execute();
-//     $result = $q->fetch();
-//     echo $result['passphrase'];
-    
-//     // if($result['passphrase'] === $pass){
-//     //   echo "Correct password";
-//     //   header('Location: index.php');
-//     // }
-//     // else{
-//     //   header('Location: login.php');
-//     // }
-//   }
-//   catch(PDOException $e){
-//     echo $sql . "<br>" . $e->getMessage();
-//   }
-// }
-
 if($newUser){
   // check if post info is set before assigning variables
   // otherwise we get annoying warnings on refresh
@@ -190,7 +132,40 @@ if($newReview){
   // set newReview back to false
   $_SESSION['newReview'] = FALSE;
 }
+
 require 'assets/getUserInfo.php';
+
+//set temp passphrase
+$passphrase = '';
+
+// check if the email is in the db
+try{
+  $q = $conn->prepare("SELECT passphrase FROM PERSON WHERE email = :email");
+  $q->bindParam(':email',$email);
+  $q->execute();
+  $passresult = $q->fetch();
+
+  // check if the query returned a passphrase
+  if(isset($passresult['passphrase'])){
+    // set the passphrase to the one returned from the db
+    $passphrase = $passresult['passphrase'];
+  }
+  else{
+    // if the query didn't return a passphrase, set it to something that won't work
+    $passphrase = 'not working';
+  }
+}
+catch(PDOException $e) {
+  echo $sql . "<br>" . $e->getMessage();
+}
+
+// check if the passphrase is correct
+if($pass !== $passphrase){
+  // if the passphrase is wrong, set the error message and redirect to login
+  $inccorect_login = 'Incorrect email or password';
+  header('Location: login.php');
+}
+
 require 'assets/head.php';
 require 'assets/navbar.php'
 ?>

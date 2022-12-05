@@ -14,7 +14,7 @@ if($futureAppointments){
 
 if($personType == 1){
   echo "<th>Pet Sitter First Name</th><th> Pet Sitter Last Name</th><th> Pet Sitter Email</th><th>Start Time</th> <th>Duration (hours) </th>".$lastCol."</tr>";
-}else{
+}else if($personType == 2){
   echo "<tr><th>Pet Owner First Name</th><th>Pet Owner Last Name</th><th>Pet Owner Email</th><th>Start Time</th> <th>Duration (hours) </th>".$lastCol."</tr>";
 }
 
