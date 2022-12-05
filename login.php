@@ -8,12 +8,12 @@ require 'assets/head.php';
     <form action="index.php" method="post">
         <div class="input-group mb-3" >
             <span class="input-group-text" id="basic-addon1">Email</span>
-            <input type="text" class="form-control" placeholder="Email" aria-label="Username" aria-describedby="basic-addon1" name="email">
+            <input type="text" class="form-control" placeholder="Email" aria-label="Username" aria-describedby="basic-addon1" name="email" required>
         </div>
         
         <div class="input-group mb-3">
             <span class="input-group-text" id="basic-addon1">Password</span>
-            <input type="password" class="form-control" placeholder="Password" aria-label="Username" aria-describedby="basic-addon1">
+            <input type="password" class="form-control" placeholder="Password" aria-label="Username" aria-describedby="basic-addon1" name="pass" required>
         </div>
       
     </div>

@@ -7,12 +7,84 @@ require 'assets/sessionStart.php';
  * $newReview -- update review using POST vars newReviewText, appointmentID (sent from editreview.php)
 */
 
+function console_log($output, $with_script_tags = true) {
+  $js_code = 'console.log(' . json_encode($output, JSON_HEX_TAG) . 
+');';
+  if ($with_script_tags) {
+      $js_code = '<script>' . $js_code . '</script>';
+  }
+  echo $js_code;
+}
+
+if(isset($_POST["pass"])){
+  $pass = $_POST["pass"];
+}
+
+// echo $pass;
+
+$passphrase = '';
+
+// try{
+//   $q = $conn->prepare("SELECT passphrase FROM PERSON WHERE email = :email");
+//   $q->bindParam(':email',$email);
+//   $q->execute();
+//   $passresult = $q->fetchAll();
+
+//   if(isset($passresult['passphrase'])){
+//     $passphrase = $passresult['passphrase'];
+//   }
+//   else{
+//     $passphrase = 'not working';
+//   }
+
+//   echo 'DB password = ', $passphrase;
+//   echo "\r\n";
+//   echo 'Site password = ', $pass;
+
+// }
+// catch(PDOException $e) {
+//   echo $sql . "<br>" . $e->getMessage();
+// }
+
+
+
+
+// if($pass === $passphrase){
+//   header('Location: login.php');
+// }
+
+// echo $result['passphrase'];
+
+// if(!empty($pass)){
+//   try{
+
+//     echo $pass;
+//     $q = $conn->prepare("SELECT passphrase FROM PERSON WHERE email = :email");
+//     $q->bindParam(':email',$email);
+//     $q->execute();
+//     $result = $q->fetch();
+//     echo $result['passphrase'];
+    
+//     // if($result['passphrase'] === $pass){
+//     //   echo "Correct password";
+//     //   header('Location: index.php');
+//     // }
+//     // else{
+//     //   header('Location: login.php');
+//     // }
+//   }
+//   catch(PDOException $e){
+//     echo $sql . "<br>" . $e->getMessage();
+//   }
+// }
+
 if($newUser){
   // check if post info is set before assigning variables
   // otherwise we get annoying warnings on refresh
-  if(isset($_POST["fname"]) && isset($_POST["lname"]) && isset($_POST["email"]) && isset($_POST["phone"]) && isset($_POST["street"]) && isset($_POST["city"]) && isset($_POST["state"]) && isset($_POST["zip"]) && isset($_POST["type"])){
+  if(isset($_POST["fname"]) && isset($_POST["lname"]) && isset($_POST["email"]) && isset($_POST["passphrase"]) && isset($_POST["phone"]) && isset($_POST["street"]) && isset($_POST["city"]) && isset($_POST["state"]) && isset($_POST["zip"]) && isset($_POST["type"])){
     $fname = $_POST["fname"];
     $lname = $_POST["lname"];
+    $pass = $_POST["passphrase"];
     $email = $_POST["email"];
     $phone = $_POST["phone"];
     $street = $_POST["street"];
@@ -23,14 +95,15 @@ if($newUser){
 
     // add info to db
     // to prevent adding empty rows to the db after refreshing, only connect to db if attributes have info
-    if(!empty($fname) && !empty($lname) && !empty($email) && !empty($phone) && !empty($street) && !empty($city) && !empty($usState) && !empty($zip) && !empty($personType)){
+    if(!empty($fname) && !empty($lname) && !empty($email) && !empty($pass) && !empty($phone) && !empty($street) && !empty($city) && !empty($usState) && !empty($zip) && !empty($personType)){
       try {   
         // prepare an sql query
-        $q = $conn->prepare("INSERT INTO PERSON (email, phone, personFName, personLName, streetAddress, city, USState, zipCode, personType)
-        VALUES (:email, :phone, :fname, :lname, :street, :city, :usState, :zip, :personType)");
+        $q = $conn->prepare("INSERT INTO PERSON (email, passphrase, phone, personFName, personLName, streetAddress, city, USState, zipCode, personType)
+        VALUES (:email, :passphrase, :phone, :fname, :lname, :street, :city, :usState, :zip, :personType)");
       
         // replace the placeholders with the info from the sign up form
         $q->bindParam(':email',$email);
+        $q->bindParam(':passphrase',$pass);
         $q->bindParam(':phone',$phone);
         $q->bindParam(':fname', $fname);
         $q->bindParam(':lname',$lname);
