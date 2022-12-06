@@ -7,6 +7,7 @@ $dbname = "petSitting";
 $newUser = $_SESSION[ 'newUser' ];
 $newPet = $_SESSION[ 'newPet' ];
 $editPet = $_SESSION['editPet'];
+$editInfo = $_SESSION['editInfo'];
 
 // connect to petsitting db
 $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
@@ -83,6 +84,70 @@ if($newPet){
   }
   // set newPet back to false
   $_SESSION['newPet'] = FALSE;
+}
+
+if($editInfo){
+  // see if we need to delete or update a pet
+  if(isset($_POST['deleteAccount'])){
+    // check if post info is set before assigning variables
+    // otherwise we get annoying warnings on refresh
+    if(isset($_POST['personID'])){
+      $personID = $_POST['personID'];
+    }
+
+    // if petID is non-empty, attempt to delete associated pet from db 
+    if(!empty($personID)){
+      try{
+        // use a prepared statement for the query to stop sql injections
+        $q = $conn->prepare("DELETE FROM PERSON WHERE personID = :personID");
+        // replace the placeholder with the apptID
+        $q->bindParam(':personID',$personID);
+
+        // do the sql query
+        $q->execute();
+      }catch(PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+      }
+    }
+  }else{
+    // update the pet
+    
+    // check if post info is set before assigning variables
+    // otherwise we get annoying warnings on refresh
+    if(isset($_POST['newpersonFName']) && isset($_POST['newpersonLName']) && isset($_POST['newphone']) && isset($_POST['newstreetAddress']) && isset($_POST['newcity']) && isset($_POST['newusState']) && isset($_POST['newzipCode']) && isset($_POST['newpersonType'])&& isset($_POST['personID'])){
+      $newpersonFName = $_POST['newpersonFName'];
+      $newpersonLName = $_POST['newpersonLName'];
+      $newphone = $_POST['newphone'];
+      $newstreetAddress = $_POST['newstreetAddress'];
+      $newcity = $_POST['newcity'];
+      $newusState = $_POST['newusState'];
+      $newpersonType = $_POST['newpersonType'];
+      $personID = $_POST['personID'];
+    }
+
+    // only update review in db if new petname, species, requirements, and (not new) petID are non-empty
+    if(!empty($newpersonFName) && !empty($newpersonLName) && !empty($newphone) && !empty($newstreetAddress) && !empty($newcity) && !empty($newusState) && !empty($newpersonType) && !empty($personID)){
+      // try to update the database
+      try{
+        // use a prepared statement for the query to stop sql injections
+        $q = $conn->prepare("UPDATE PERSON SET personFName = :newpersonFName, personLName = :newpersonLName, phone = :newphone, streetAddress = :newstreetAddress, city = :newcity, usState = :newusState, personType = :newpersonType, WHERE personID = :personID");
+        // replace the placeholders with the petname, species, requirements, and petID
+        $q->bindParam(':newpersonFName',$newpersonFName);
+        $q->bindParam(':newpersonLName',$newpersonLName);
+        $q->bindParam(':newphone',$newphone);
+        $q->bindParam(':newstreetAddress',$newstreetAddress);
+        $q->bindParam(':newcity',$newcity);
+        $q->bindParam(':newusState',$newusState);
+
+        // do the sql query
+        $q->execute();
+      }catch(PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+      }
+    }
+  }
+  // set editPet back to false
+  $_SESSION['editInfo'] = FALSE;
 }
 
 if($editPet){
@@ -295,6 +360,10 @@ if ( window.history.replaceState ) {
             else
               echo "<p>You are a <b>Pet Sitter</b></p>";
             ?>
+            
+          <div style="margin-top:1%;">
+            <a href="editinfo.php"><button type="button" class="btn btn-outline-primary">Edit My Info</button></a>
+          </div>
         </div>
     </div>
   </div>

@@ -5,7 +5,6 @@ $username = "root";
 $password = "";
 $dbname = "petSitting";
 $newUser = $_SESSION[ 'newUser' ];
-$newPet = $_SESSION[ 'newPet' ];
 
 // connect to petsitting db
 $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
@@ -50,40 +49,6 @@ try{
 }catch(PDOException $e) {
   echo $sql . "<br>" . $e->getMessage();
 }
-
-// get petID passed on from previous page
-if(isset($_POST['petID'])){
-  $petID = $_POST['petID'];
-      
-  // if not set, set session var petID to the petID (otherwise refresh breaks the page)
-  if(!isset($_SESSION[ 'petID'])){
-    $_SESSION[ 'petID' ] = $petID;
-  }
-}else{
-  $petID = $_SESSION[ 'petID' ];
-}  
-
-// get pet's requirements from db
-try{
-  // use a prepared statement for the query
-  $q = $conn->prepare("SELECT petName, species, requirements FROM pet WHERE petID = :petID");
-  // replace the placeholder with the petID
-  $q->bindParam(':petID',$petID);
-  // run the query and store the result
-  $q->execute();
-  $result = $q->fetch();
-      
-  // check that we got petName, species, and requirements columns and save their contents for later
-  if(isset($result['petName']) && isset($result['species']) && isset($result['requirements'])){
-    $petName = $result['petName'];
-    $species = $result['species'];
-    $requirements = $result['requirements'];
-  }else{
-    $petName = $species = $requirements = "";
-  }
-}catch(PDOException $e){
-  echo $sql . "<br>" . $e->getMessage();
-}
 ?>
 
 <script>
@@ -108,7 +73,7 @@ if ( window.history.replaceState ) {
             integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
             crossorigin="anonymous"
         />
-        <title>Pet Stop | Edit Pet</title>
+        <title>Pet Stop | Edit Account</title>
         <link rel="icon" type="image/x-icon" href="assets/DogHouse.png">
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" ></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>
@@ -142,51 +107,38 @@ if ( window.history.replaceState ) {
         </div>    
         <div>
         <div>
-            <h1 style="text-align:center; margin-bottom:5%;"> Edit Pet </h1>
+            <h1 style="text-align:center; margin-bottom:5%;"> Edit My Account </h1>
         </div>
         <div style="margin-right:30%; margin-left:30%;">
         <!-- Table of pet details to give user a frame of reference for which pet they're editing -->
         <?php
         echo "<center><table style='border: solid 1px black;'>";
-        echo "<th>Pet Name</th><th> Species</th><th> Requirements</th></tr>";
+        echo "<th>First Name</th><th>Last Name</th><th>phone</th><th>Street Address</th><th>city</th><th>usState</th><th>zipCode</th><th>personType</th></tr>";
 
         class TableRows extends RecursiveIteratorIterator {
           function __construct($it) {
             parent::__construct($it, self::LEAVES_ONLY);
           }
-
           function current() {
             $curVal = parent::current();
-            if(parent::key() == 'species'){
-              /* convert from int to species such that:
-               * 1 = dog
-               * 2 = cat
-               * 3 = fish
-               * 4 = bird
-               * 5 = monkey
-               * 6 = other
-               */
-              switch($curVal){
-                case '1':
-                  $curVal = 'Dog';
-                  break;
-                case '2':
-                  $curVal = 'Cat';
-                  break;
-                case '3':
-                  $curVal = 'Fish';
-                  break;
-                case '4':
-                  $curVal = 'Bird';
-                  break;
-                case '5':
-                  $curVal = 'Monkey';
-                  break;
-                default:
-                  $curVal = 'Other';
-                  break;
+            if(parent::key() == 'personType'){
+                /* convert from int to species such that:
+                 * 1 = dog
+                 * 2 = cat
+                 * 3 = fish
+                 * 4 = bird
+                 * 5 = monkey
+                 * 6 = other
+                 */
+                switch($curVal){
+                  case '1':
+                    $curVal = 'Pet Owner';
+                    break;
+                  case '2':
+                    $curVal = 'Pet Sitter';
+                    break;
+                }
               }
-            }
             return "<td style='width:150px;border:1px solid black;'>" . $curVal. "</td>";
           }
 
@@ -200,10 +152,10 @@ if ( window.history.replaceState ) {
         }
         try {
           // get appointment information from database
-          $q = $conn->prepare("SELECT petName, species, requirements FROM pet WHERE petID = :petID");
+          $q = $conn->prepare("SELECT personFName, personLName, phone, streetAddress, city, usState, zipCode, personType FROM person WHERE personID = :personID");
         
           // replace the placeholder with the petID
-          $q->bindParam('petID',$petID);
+          $q->bindParam('personID',$personID);
 
           // do the sql query and store the result in an array
           $q->execute();
@@ -221,62 +173,36 @@ if ( window.history.replaceState ) {
             <!-- Form for user to edit their pet -->
             <form action="acctinfo.php" method="post">
                 <div class="input-group mb-3">
-                    <span class="input-group-text">Pet Name</span>
-                    <input type="text" <?php echo "value=".$petName; ?> aria-label="Pet Name" class="form-control" name="newPetName">
+                    <span class="input-group-text">First and Last name</span>
+                    <input type="text" placeholder="First Name" aria-label="First name" class="form-control" name="newpersonFname" <?php echo "value=".$personFName; ?>>
+                    <input type="text" placeholder="Last Name" aria-label="Last name" class="form-control" name="newpersonLname" <?php echo "value=".$personLName; ?>>
                 </div>
 
-                <div class="input-group">
-                    <span class="input-group-text">Requirements</span>
-                    <?php
-                    echo "<input type='hidden' name='petID' value='".$petID."'>";
-                    echo "<textarea class='form-control' aria-label='With textarea' name='newRequirements'>".$requirements."</textarea>";
-                    ?>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1">Email Address</span>
+                    <input type="text" class="form-control" placeholder="Email" aria-label="E-mail_Address@example.com" aria-describedby="basic-addon1" name="newemail" <?php echo "value=".$email; ?>>
                 </div>
+
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1">Phone Number</span>
+                    <input type="text" class="form-control" placeholder="123-456-7890" aria-label="Phone" aria-describedby="basic-addon1" name="newphone" <?php echo "value=".$phone; ?>>
+                </div>
+
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Address</span>
+                    <input type="text" placeholder="1234 Street Road apt 567" aria-label="Address" class="form-control" name="newstreetAddress" <?php echo "value=".$streetAddress; ?>>
+                    <input type="text" placeholder="City" aria-label="City" class="form-control" name="newcity" <?php echo "value=".$city; ?>>
+                    <input type="text" placeholder="State" aria-label="State" class="form-control" name="newusState" <?php echo "value=".$usState; ?>>
+                    <input type="text" placeholder="Zip Code" aria-label="Zip" class="form-control" name="newzipCode" <?php echo "value=".$zipCode; ?>>
+                </div>
+                <center><button type="submit" class="btn btn-outline-primary" style="padding-top:1%;" name='updateAccount'>Update Info</button></a></center>
                 <br>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="newSpecies" id="flexRadioDefault1" value="1" <?php if($species == 1) echo "checked='true'";?>>
-                        <label class="form-check-label" for="flexRadioDefault1">
-                            Dog
-                        </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="newSpecies" id="flexRadioDefault2" value="2" <?php if($species == 2) echo "checked='true'";?>>
-                        <label class="form-check-label" for="flexRadioDefault2">
-                            Cat
-                        </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="newSpecies" id="flexRadioDefault3" value="3" <?php if($species == 3) echo "checked='true'";?>>
-                        <label class="form-check-label" for="flexRadioDefault3">
-                            Fish
-                        </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="newSpecies" id="flexRadioDefault4" value="4" <?php if($species == 4) echo "checked='true'";?>>
-                        <label class="form-check-label" for="flexRadioDefault4">
-                            Bird
-                        </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="newSpecies" id="flexRadioDefault5" value="5" <?php if($species == 5) echo "checked='true'";?>>
-                        <label class="form-check-label" for="flexRadioDefault5">
-                            Monkey
-                        </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="newSpecies" id="flexRadioDefault6" value="6" <?php if($species == 6) echo "checked='true'";?>>
-                        <label class="form-check-label" for="flexRadioDefault6">
-                            Other (Identify in Requirements)
-                        </label>
-                </div>
-                <center><button type="submit" class="btn btn-outline-primary" style="padding-top:1%;" name='updatePet'>Update Pet</button></a></center>
-                <br>
-                <center><button type="submit" class="btn btn-outline-danger" style="padding-top:1%;" name='deletePet'>Delete Pet</button></a></center>
+                <center><button type="submit" class="btn btn-outline-danger" style="padding-top:1%;" name='deleteAccount'>Delete My Account</button></a></center>
             </form>
         </div>
         <?php 
             // note that we need to update database when we get back
-            $_SESSION[ 'editPet' ] = TRUE;
+            $_SESSION[ 'editInfo' ] = TRUE;
         ?>
     </body>
 </html>

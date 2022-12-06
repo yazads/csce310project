@@ -5,7 +5,6 @@ $username = "root";
 $password = "";
 $dbname = "petSitting";
 $newUser = $_SESSION[ 'newUser' ];
-$newAppt = $_SESSION[ 'newAppt' ];
 $newPet = $_SESSION[ 'newPet' ];
 $newReview = $_SESSION['newReview'];
 
@@ -125,32 +124,6 @@ if($newReview){
   }else{
     // update or create the review
 
-  if($newAppt){
-    // check if post info is set before assigning variables
-    // otherwise we get annoying warnings on refresh
-    if(isset($_POST["appointmentDay"]) && isset($_POST["appointmentMonth"]) && isset($_POST["appointmentYear"]) && isset($_POST["startTime"]) && isset($_POST["duration"])){
-      $appointmentDay = $_POST["appointmentDay"];
-      $appointmentMonth = $_POST["appointmentMonth"];
-      $appointmentYear = $_POST["appointmentYear"];  
-      $startTime = $_POST["startTime"];
-      $duration = $_POST["duration"];    
-    }
-
-    // to prevent adding empty rows to the db after refreshing, only connect to db if attributes have info
-    if(!empty($appointmentDay) && !empty($appointmentMonth) && !empty($appointmentYear) && !empty($startTime) && !empty($duration)){
-      try {
-        // prepare an sql query
-        $q = $conn->prepare("INSERT INTO APPOINTMENT (petOwner, petSitter, appointmentDay, appointmentMonth, appointmentYear, startTime, duration)
-        VALUES (:petOwner, :petSitter, :appointmentDay, :appointmentMonth, :appointmentYear, :startTime, :duration)");
-
-        // replace the placeholders with the info from the sign up form
-        $q->bindParam(':petOwner',$personID);
-        $q->bindParam(':petSitter',$NULL);
-        $q->bindParam(':appointmentDay',$appointmentDay);
-        $q->bindParam(':appointmentMonth', $appointmentMonth);
-        $q->bindParam(':appointmentYear',$appointmentYear);
-        $q->bindParam(':startTime',$startTime);
-        $q->bindParam(':duration',$duration);
     // check if post info is set before assigning variables
     // otherwise we get annoying warnings on refresh
     if(isset($_POST['newReviewText']) && isset($_POST['appointmentID'])){
@@ -433,9 +406,9 @@ if ( window.history.replaceState ) {
         $conn = null;
         echo "</table>";
         ?>
-        
-        <br></br>
-            <a href="createappt.php"><button type="button" class="btn btn-outline-primary">Add New Appointment</button></a>
+        <div style = "margin-top:1%;">
+          <a href="createappt.php"><button type="button" class="btn btn-outline-primary">Create Appointment</button></a>
+        </div>
       </div>
     </div>
   </div>
