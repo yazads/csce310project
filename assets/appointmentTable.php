@@ -36,15 +36,15 @@ try {
         // query for appts with dates >= right now
         $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, appointment.appointmentID
         FROM (appointment
-        INNER JOIN person ON appointment.petOwner = person.personID) 
+        INNER JOIN person ON appointment.petSitter = person.personID) 
         WHERE appointment.petOwner = :personID AND DATE(startTime) >= CURDATE() ORDER BY startTime ASC");
       }else{
         // query for appts with dates < right now
         $q = $conn->prepare("SELECT DISTINCT appointment.appointmentID, person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
         FROM ((appointment
-        INNER JOIN person ON appointment.petOwner = person.personID) 
+        INNER JOIN person ON appointment.petSitter = person.personID) 
         LEFT JOIN review ON review.appointmentID = appointment.appointmentID)
-        WHERE person.personID = :personID AND DATE(startTime) < CURDATE() ORDER BY startTime ASC");
+        WHERE appointment.petOwner = :personID AND DATE(startTime) < CURDATE() ORDER BY startTime ASC");
       }
     }else{
       // this is a pet sitter
