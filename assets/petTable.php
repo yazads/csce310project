@@ -39,6 +39,7 @@ class TableRows extends RecursiveIteratorIterator {
 
     function current() {
       $curVal = parent::current();
+      $page = pathinfo($_SERVER['REQUEST_URI'])['filename'];
       if(parent::key() == 'species'){
         /* convert from int to species such that:
          * 1 = dog
@@ -68,11 +69,14 @@ class TableRows extends RecursiveIteratorIterator {
             $curVal = 'Other';
             break;
         }
-      }else if(parent::key() == 'petID'){
+      }else if(parent::key() == 'petID' && $page == 'acctinfo'){
         // display a button that lets you edit the pet and pass along the petID to the next page
         $petID = parent::current();
         return "<form action='editpet.php' method='post' id='editPet'><input type='hidden' name='petID' value='".$petID."'>
         <td style='width:150px;border:1px solid black;'> <center><button class='btn btn-outline-primary' type='submit' >Edit Pet</button></center></form></td>";
+      }else if(parent::key() == 'petID'){
+        // we're on editpet, so we don't want to display anything
+        return;
       }
       return "<td style='width:150px;border:1px solid black;'>" . $curVal. "</td>";
     }
@@ -90,12 +94,10 @@ class TableRows extends RecursiveIteratorIterator {
 try {
   if($page == 'acctinfo' && $personType == 3){
     // query to get all pets
-    $q = $conn->prepare("SELECT person.email, pet.petName, pet.species, pet.requirements, pet.petID 
-    FROM pet INNER JOIN person ON pet.personID = person.personID");
+    $q = $conn->prepare("SELECT * FROM petAndOwner");
   }else if($page == 'editpet' && $personType == 3){
     // query to get all pets
-    $q = $conn->prepare("SELECT person.email, pet.petName, pet.species, pet.requirements
-    FROM pet INNER JOIN person ON pet.personID = person.personID WHERE petID = :petID");
+    $q = $conn->prepare("SELECT * FROM petAndOwner WHERE petID = :petID");
     // replace the placeholder with the petID
     $q->bindParam('petID',$petID);
   }else if($page == 'acctinfo'){
