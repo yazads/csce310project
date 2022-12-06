@@ -25,6 +25,7 @@ require 'assets/head.php';
     $_SESSION[ 'newPet' ] = FALSE;
     $_SESSION['editPet'] = FALSE;
     $_SESSION['newReview'] = FALSE;
+    $_SESSION['comeFromLogin'] = TRUE;
 
     // unset email session var
     unset($_SESSION[ 'email' ]);

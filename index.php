@@ -16,6 +16,10 @@ function console_log($output, $with_script_tags = true) {
   echo $js_code;
 }
 
+if(isset($_POST["pass"])){
+  $pass = $_POST["pass"];
+}
+
 if($newUser){
   // check if post info is set before assigning variables
   // otherwise we get annoying warnings on refresh
@@ -131,40 +135,42 @@ if($newReview){
 
 require 'assets/getUserInfo.php';
 
-if(isset($_POST["pass"])){
-  $pass = $_POST["pass"];
-}
-
 //set temp passphrase
-$passphrase = '';
 
-// check if the email is in the db
-try{
-  $q = $conn->prepare("SELECT passphrase FROM PERSON WHERE email = :email");
-  $q->bindParam(':email',$email);
-  $q->execute();
-  $passresult = $q->fetch();
+if($comeFromLogin){
+  $passphrase = '';
 
-  // check if the query returned a passphrase
-  if(isset($passresult['passphrase'])){
-    // set the passphrase to the one returned from the db
-    $passphrase = $passresult['passphrase'];
+  // check if the email is in the db
+  try{
+    $q = $conn->prepare("SELECT passphrase FROM PERSON WHERE email = :email");
+    $q->bindParam(':email',$email);
+    $q->execute();
+    $passresult = $q->fetch();
+  
+    // check if the query returned a passphrase
+    if(isset($passresult['passphrase'])){
+      // set the passphrase to the one returned from the db
+      $passphrase = $passresult['passphrase'];
+    }
+    else{
+      // if the query didn't return a passphrase, set it to something that won't work
+      $passphrase = 'not working';
+    }
   }
-  else{
-    // if the query didn't return a passphrase, set it to something that won't work
-    $passphrase = 'not working';
+  catch(PDOException $e) {
+    echo $sql . "<br>" . $e->getMessage();
   }
-}
-catch(PDOException $e) {
-  echo $sql . "<br>" . $e->getMessage();
+  
+  // check if the passphrase is correct
+  if($pass !== $passphrase){
+    // if the passphrase is wrong, set the error message and redirect to login
+    $inccorect_login = 'Incorrect email or password';
+    header('Location: login.php');
+  }
+
+  $_SESSION['comeFromLogin'] = FALSE;
 }
 
-// check if the passphrase is correct
-if($pass !== $passphrase){
-  // if the passphrase is wrong, set the error message and redirect to login
-  $inccorect_login = 'Incorrect email or password';
-  header('Location: login.php');
-}
 
 require 'assets/head.php';
 require 'assets/navbar.php'
