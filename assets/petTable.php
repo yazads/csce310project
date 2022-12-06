@@ -2,10 +2,26 @@
 // get what page we're on, since only acctinfo has the edit pet option
 $page = pathinfo($_SERVER['REQUEST_URI'])['filename'];
 
+$ownerEmail = '';
+
+if($personType == 3){
+  // include pet owner info in table (fname, lname, email)
+  $ownerEmail = '<th>Pet Owner Email</th>';
+}
 if($page == 'acctinfo'){
-  // display on the left, have a 'My Pets' header, and have a 'Customize' column
+  // display on the left, have a '(My) Pets' header, and have a 'Customize' column
   echo "<div class ='fleft'>";
-  echo "<h2>My Pets</h2><br><br>";
+  $my = '';
+
+  // just say Pets when admin is logged in, otherwise have My Pets
+  if($personType == '1'){
+    $my = 'My ';
+  }
+  echo "<h2>".$my."Pets</h2>";
+
+  //display create pet button if we're on acctinfo page
+  echo "<a href='createpet.php'><button type='button' class='btn btn-outline-primary'>Add New Pet</button></a><br><br>";
+
   $lastCol = '<th>Customize</th>';
 }else{
   // we're on edit pet, so don't have 'My Pets' header and leave div centered
@@ -14,7 +30,7 @@ if($page == 'acctinfo'){
 }
 
 echo "<center><table style='border: solid 1px black;'>";
-echo "<th>Pet Name</th> <th>Species</th> <th>Requirements</th>".$lastCol."</tr>";
+echo $ownerEmail."<th>Pet Name</th> <th>Species</th> <th>Requirements</th>".$lastCol."</tr>";
 
 class TableRows extends RecursiveIteratorIterator {
     function __construct($it) {
@@ -72,7 +88,17 @@ class TableRows extends RecursiveIteratorIterator {
 
 // get info from db to display in table
 try {
-  if($page == 'acctinfo'){
+  if($page == 'acctinfo' && $personType == 3){
+    // query to get all pets
+    $q = $conn->prepare("SELECT person.email, pet.petName, pet.species, pet.requirements, pet.petID 
+    FROM pet INNER JOIN person ON pet.personID = person.personID");
+  }else if($page == 'editpet' && $personType == 3){
+    // query to get all pets
+    $q = $conn->prepare("SELECT person.email, pet.petName, pet.species, pet.requirements
+    FROM pet INNER JOIN person ON pet.personID = person.personID WHERE petID = :petID");
+    // replace the placeholder with the petID
+    $q->bindParam('petID',$petID);
+  }else if($page == 'acctinfo'){
     // query to get all pets for the user
     $q = $conn->prepare("SELECT petName, species, requirements, petID FROM pet WHERE personID = :personID");
     // replace the placeholder with the personID
@@ -95,8 +121,6 @@ try {
 }
 echo "</table> </center>";
 if($page == 'acctinfo'){
-  // only display create pet button if we're on acctinfo page
-  echo "<br><br><a href='createpet.php'><button type='button' class='btn btn-outline-primary'>Add New Pet</button></a>";
   echo "</div>";
 }
 

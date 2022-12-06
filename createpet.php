@@ -12,6 +12,7 @@ require 'assets/navbar.php';
         </div>
         <div style="margin-right:30%; margin-left:30%;">
             <form action="acctinfo.php" method="post">
+                <?php require 'assets/emailDropDown.php'?>
                 <div class="input-group mb-3">
                     <span class="input-group-text">Pet Name</span>
                     <input type="text" placeholder="Shadow" aria-label="Pet Name" class="form-control" name="petname">

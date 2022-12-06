@@ -49,8 +49,9 @@ try{
         <!-- Table of pet details to give user a frame of reference for which pet they're editing -->
         <?php require 'assets/petTable.php'; ?>
         <br><br>
-            <!-- Form for user to edit their pet -->
+            <!-- Form to edit the pet -->
             <form action="acctinfo.php" method="post">
+                <?php require 'assets/emailDropDown.php'?>
                 <div class="input-group mb-3">
                     <span class="input-group-text">Pet Name</span>
                     <input type="text" <?php echo "value=".$petName; ?> aria-label="Pet Name" class="form-control" name="newPetName">

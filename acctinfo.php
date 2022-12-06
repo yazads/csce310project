@@ -3,6 +3,7 @@ require 'assets/sessionStart.php';
 require 'assets/getUserInfo.php';
 require 'assets/head.php';
 require 'assets/navbar.php';
+require_once 'assets/dbFunctions.php';
 
 /* update the db if we're coming from editpet.php or createpet.php */
 if($newPet){
@@ -12,6 +13,11 @@ if($newPet){
     $petname = $_POST["petname"];
     $species = $_POST["species"];
     $requirements = $_POST["requirements"];  
+
+    // if admin is logged in then we also need to get the petOwner
+    if(isset($_POST['petOwner'])){
+      $petOwner = getPersonIDByEmail($_POST['petOwner']);
+    }
   }
 
   // to prevent adding empty rows to the db after refreshing, only connect to db if attributes have info
@@ -21,8 +27,14 @@ if($newPet){
       $q = $conn->prepare("INSERT INTO PET (personID, petName, species, requirements)
       VALUES (:personID, :petName, :species, :requirements)");
     
-      // replace the placeholders with the info from the sign up form
-      $q->bindParam(':personID',$personID);
+      // replace the placeholders with the info from the create pet form
+      if($personType == 3 && !empty($petOwner)){
+        // use the personid of the petowner from the form instead of the admin's personid
+        $q->bindParam(':personID',$petOwner);
+      }else{
+        // use the personid of the current user
+        $q->bindParam(':personID',$personID);
+      }
       $q->bindParam(':petName',$petname);
       $q->bindParam(':species', $species);
       $q->bindParam(':requirements',$requirements);
@@ -62,7 +74,6 @@ if($editPet){
     }
   }else{
     // update the pet
-    
     // check if post info is set before assigning variables
     // otherwise we get annoying warnings on refresh
     if(isset($_POST['newPetName']) && isset($_POST['newSpecies']) && isset($_POST['newRequirements']) && isset($_POST['petID'])){
@@ -70,6 +81,11 @@ if($editPet){
       $newSpecies = $_POST['newSpecies'];
       $newRequirements = $_POST['newRequirements'];
       $petID = $_POST['petID'];
+
+      // if admin is logged in, we also need to get the petOwner email and get the petOwner's personID
+      if(isset($_POST['petOwner'])){
+        $petOwner = getPersonIDByEmail($_POST['petOwner']);
+      }
     }
 
     // only update review in db if new petname, species, requirements, and (not new) petID are non-empty
@@ -77,7 +93,14 @@ if($editPet){
       // try to update the database
       try{
         // use a prepared statement for the query to stop sql injections
-        $q = $conn->prepare("UPDATE PET SET petName = :newPetName, species = :newSpecies, requirements = :newRequirements WHERE petID = :petID");
+        if($personType == 3){
+          // also include personID in the query
+          $q = $conn->prepare("UPDATE PET SET petName = :newPetName, personID = :personID, species = :newSpecies, requirements = :newRequirements WHERE petID = :petID");
+          // replace the extra personID
+          $q->bindParam(':personID',$petOwner);
+        }else{
+          $q = $conn->prepare("UPDATE PET SET petName = :newPetName, species = :newSpecies, requirements = :newRequirements WHERE petID = :petID");
+        }
         // replace the placeholders with the petname, species, requirements, and petID
         $q->bindParam(':newPetName',$newPetName);
         $q->bindParam(':newSpecies',$newSpecies);
@@ -96,8 +119,8 @@ if($editPet){
 }
 ?>
     <div class = "wrap">
-            <?php if($personType == 1)require 'assets/petTable.php';?>
-        <div <?php if($personType == 1) echo "class='fright'";?>>
+            <?php if($personType != 2)require 'assets/petTable.php';?>
+        <div <?php if($personType != 2) echo "class='fright'";?>>
             <h2>My Info</h2>
             <br></br>
             <?php

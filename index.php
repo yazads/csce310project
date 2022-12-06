@@ -16,10 +16,6 @@ function console_log($output, $with_script_tags = true) {
   echo $js_code;
 }
 
-if(isset($_POST["pass"])){
-  $pass = $_POST["pass"];
-}
-
 if($newUser){
   // check if post info is set before assigning variables
   // otherwise we get annoying warnings on refresh
@@ -134,6 +130,10 @@ if($newReview){
 }
 
 require 'assets/getUserInfo.php';
+
+if(isset($_POST["pass"])){
+  $pass = $_POST["pass"];
+}
 
 //set temp passphrase
 $passphrase = '';
