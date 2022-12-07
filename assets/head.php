@@ -26,6 +26,9 @@
     case 'editreview':
       $pageTitle = 'Edit Review';
       break;
+    case 'editacctinfo':
+      $pageTitle = 'Edit Account';
+      break;    
     default:
     $pageTitle = '*ADD PAGE TO HEAD.PHP*';
   }
