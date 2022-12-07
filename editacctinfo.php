@@ -3,41 +3,7 @@ require 'assets/sessionStart.php';
 require 'assets/getUserInfo.php';
 require 'assets/head.php';
 require 'assets/navbar.php';
-
-// // get petID passed on from previous page
-// if(isset($_POST['personID'])){
-//   $personID = $_POST['personID'];
-      
-//   // if not set, set session var petID to the petID (otherwise refresh breaks the page)
-//   if(!isset($_SESSION[ 'personID'])){
-//     $_SESSION[ 'personID' ] = $personID;
-//   }
-// }else{
-//   $personID = $_SESSION[ 'personID' ];
-// }
-
-// // get pet's requirements from db
-// try{
-//   // use a prepared statement for the query
-//   $q = $conn->prepare("SELECT petName, species, requirements FROM pet WHERE petID = :petID");
-//   // replace the placeholder with the petID
-//   $q->bindParam(':petID',$petID);
-//   // run the query and store the result
-//   $q->execute();
-//   $result = $q->fetch();
-      
-//   // check that we got petName, species, and requirements columns and save their contents for later
-//   if(isset($result['petName']) && isset($result['species']) && isset($result['requirements'])){
-//     $petName = $result['petName'];
-//     $species = $result['species'];
-//     $requirements = $result['requirements'];
-//   }else{
-//     $petName = $species = $requirements = "";
-//   }
-// }catch(PDOException $e){
-//   echo $sql . "<br>" . $e->getMessage();
-// }
-// ?>
+?>
 
 <div style="margin-top:1%; margin-left:95%;">
         <a href="acctinfo.php"><button type="button" class="btn btn-outline-primary">Back</button></a>
