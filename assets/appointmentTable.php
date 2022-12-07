@@ -12,11 +12,11 @@
     $lastCol = '<th>Review</th>';
   }
 
-  if($personType == 1){
-    echo "<th>Pet Sitter First Name</th><th> Pet Sitter Last Name</th><th> Pet Sitter Email</th><th>Start Time</th> <th>Duration (hours) </th>".$lastCol."</tr>";
-  }else if($personType == 2){
-    echo "<tr><th>Pet Owner First Name</th><th>Pet Owner Last Name</th><th>Pet Owner Email</th><th>Start Time</th> <th>Duration (hours) </th>".$lastCol."</tr>";
-  }
+if($personType == 1){
+  echo "<th>Pet Sitter First Name</th><th> Pet Sitter Last Name</th><th> Pet Sitter Email</th><th>Start Time</th> <th>Duration (hours) </th>  <th>Pets</th>".$lastCol."</tr>";
+}else if($personType == 2){
+  echo "<tr><th>Pet Owner First Name</th><th>Pet Owner Last Name</th><th>Pet Owner Email</th><th>Start Time</th> <th>Duration (hours) </th>  <th>Pets</th>".$lastCol."</tr>";
+}
 
   // have to define the class that displays rows in another file, otherwise we get an error on index.php for defining the class twice
   if($futureAppointments){
@@ -26,42 +26,41 @@
   }
 
 
-  try {
-    // get appointment information from database
-    if($page == 'index'){
-      // get all the appts for the user
-      if($personType == 1){
-        // this is a pet owner
-        if($futureAppointments){
-          // query for appts with dates >= right now
-          $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, appointment.appointmentID
-          FROM (appointment
-          INNER JOIN person ON appointment.petSitter = person.personID) 
-          WHERE appointment.petOwner = :personID AND DATE(startTime) >= CURDATE() ORDER BY startTime ASC");
-        }else{
-          // query for appts with dates < right now
-          $q = $conn->prepare("SELECT DISTINCT appointment.appointmentID, person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
-          FROM ((appointment
-          INNER JOIN person ON appointment.petSitter = person.personID) 
-          LEFT JOIN review ON review.appointmentID = appointment.appointmentID)
-          WHERE appointment.petOwner = :personID AND DATE(startTime) < CURDATE() ORDER BY startTime ASC");
-        }
+try {
+  // get appointment information from database
+  if($page == 'index'){
+    // get all the appts for the user
+    if($personType == 1){
+      // this is a pet owner
+      if($futureAppointments){
+        // query for appts with dates >= right now
+        $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, appointment.appointmentID
+        FROM (appointment
+        INNER JOIN person ON appointment.petSitter = person.personID) 
+        WHERE appointment.petOwner = :personID AND DATE(startTime) >= CURDATE() ORDER BY startTime ASC");
       }else{
-        // this is a pet sitter
-        if($futureAppointments){
-          // query for appts with dates >= right now
-          $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, appointment.appointmentID
-          FROM (appointment
-          INNER JOIN person ON appointment.petOwner = person.personID)
-          WHERE appointment.petSitter = :personID AND DATE(startTime) >= CURDATE() ORDER BY startTime ASC");
-        }else{
-          // query for appts with dates < right now
-          $q = $conn->prepare("SELECT DISTINCT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
-          FROM ((appointment
-          INNER JOIN person ON appointment.petOwner = person.personID) 
-          LEFT JOIN review ON review.appointmentID = appointment.appointmentID)
-          WHERE appointment.petSitter = :personID AND DATE(startTime) < CURDATE() ORDER BY startTime ASC");
-        }
+        // query for appts with dates < right now
+        $q = $conn->prepare("SELECT DISTINCT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, appointment.appointmentID, review.reviewText
+        FROM ((appointment
+        INNER JOIN person ON appointment.petSitter = person.personID) 
+        LEFT JOIN review ON review.appointmentID = appointment.appointmentID)
+        WHERE appointment.petOwner = :personID AND DATE(startTime) < CURDATE() ORDER BY startTime ASC");
+      }
+    }else{
+      // this is a pet sitter
+      if($futureAppointments){
+        // query for appts with dates >= right now
+        $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, appointment.appointmentID
+        FROM (appointment
+        INNER JOIN person ON appointment.petOwner = person.personID)
+        WHERE appointment.petSitter = :personID AND DATE(startTime) >= CURDATE() ORDER BY startTime ASC");
+      }else{
+        // query for appts with dates < right now
+        $q = $conn->prepare("SELECT DISTINCT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
+        FROM ((appointment
+        INNER JOIN person ON appointment.petOwner = person.personID) 
+        LEFT JOIN review ON review.appointmentID = appointment.appointmentID)
+        WHERE appointment.petSitter = :personID AND DATE(startTime) < CURDATE() ORDER BY startTime ASC");
       }
 
       // replace the placeholder with the personID
@@ -95,8 +94,13 @@
         echo $v;
       }
     }
-  } catch(PDOException $e) {
-    echo "Error: " . $e->getMessage();
   }
-  echo "</table></center>";
+} catch(PDOException $e) {
+  echo "Error: " . $e->getMessage();
+}
+echo "</table></center>";
+
+
+
+
 ?>
