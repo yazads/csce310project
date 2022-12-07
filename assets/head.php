@@ -1,4 +1,5 @@
 <?php
+<<<<<<< HEAD
 // determine what the page title should be and which css file to use
 $page = pathinfo($_SERVER['REQUEST_URI'])['filename'];
 
@@ -42,6 +43,52 @@ if ( window.history.replaceState ) {
   window.history.replaceState( null, null, window.location.href );
 }
 </script>
+=======
+  // determine what the page title should be and which css file to use
+  $page = pathinfo($_SERVER['REQUEST_URI'])['filename'];
+
+  // set page title var
+  $pageTitle = '';
+  switch($page){
+    case 'login':
+      $pageTitle = 'Login';
+      break;
+    case 'signup':
+      $pageTitle = 'Sign Up';
+      break;
+    case 'index':
+      $pageTitle = 'Home';
+      break;
+    case 'acctinfo':
+      $pageTitle = 'Account';
+      break;
+    case 'createpet':
+      $pageTitle = 'Create Pet';
+      break;
+    case 'editpet':
+      $pageTitle = 'Edit Pet';
+      break;
+    case 'editreview':
+      $pageTitle = 'Edit Review';
+      break;
+    default:
+    $pageTitle = '*ADD PAGE TO HEAD.PHP*';
+  }
+
+  // set css file var
+  $cssFile = 'styles/acctinfo.css';
+  if($page == 'index'){
+    $cssFile = 'styles/index.css';
+  }
+?>
+<script>
+  // prevent resubmission of form on refresh
+  if ( window.history.replaceState ) {
+    window.history.replaceState( null, null, window.location.href );
+  }
+</script>
+
+>>>>>>> 87b15fdce0ad825c71155f3b2dc530affd488354
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -66,5 +113,11 @@ if ( window.history.replaceState ) {
      <?php include $cssFile; ?>
     </style>
   </head>
+<<<<<<< HEAD
   <body style="background-color:#FAE8E0">
     <div style="background-color:#FAE8E0">
+=======
+  
+<body style="background-color:#FAE8E0">
+<div style="background-color:#FAE8E0">
+>>>>>>> 87b15fdce0ad825c71155f3b2dc530affd488354
