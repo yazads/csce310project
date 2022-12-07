@@ -42,6 +42,8 @@
             </div>
             
             <center><button type="submit" class="btn btn-outline-primary">Update</button></a></center>
+            <br></br>
+            <center><button type="submit" class="btn btn-outline-primary" style="padding-top:1%;background-color:red" name='deleteAcct'>Delete Account</button></a></center>
         </form>
     </div>
     <?php 

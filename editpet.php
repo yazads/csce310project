@@ -105,7 +105,7 @@
                 </div>
                 <center><button type="submit" class="btn btn-outline-primary" style="padding-top:1%;" name='updatePet'>Update Pet</button></a></center>
                 <br>
-                <center><button type="submit" class="btn btn-outline-primary" style="padding-top:1%;background-color:red" name='deletePet'>Delete Pet</button></a></center>
+                <center><button type="submit" class="btn btn-outline-danger" style="padding-top:1%;" name='deletePet'>Delete Pet</button></a></center>
             </form>
     </div>
     <?php 
