@@ -17,6 +17,8 @@ if($personType == 1){
   echo "<th>Pet Sitter First Name</th><th> Pet Sitter Last Name</th><th> Pet Sitter Email</th><th>Start Time</th> <th>Duration (hours) </th>".$lastCol."</tr>";
 }else if($personType == 2){
   echo "<tr><th>Pet Owner First Name</th><th>Pet Owner Last Name</th><th>Pet Owner Email</th><th>Start Time</th> <th>Duration (hours) </th>".$lastCol."</tr>";
+} else if($personType == 3) {
+  echo "<th>Pet Sitter First Name</th><th> Pet Sitter Last Name</th><th> Pet Sitter Email</th><th>Start Time</th> <th>Duration (hours) </th>".$lastCol."</tr>";
 }
 
 // have to define the class that displays rows in another file, otherwise we get an error on index.php for defining the class twice
@@ -47,7 +49,7 @@ try {
         LEFT JOIN review ON review.appointmentID = appointment.appointmentID)
         WHERE person.personID = :personID AND DATE(startTime) < CURDATE() ORDER BY startTime ASC");
       }
-    }else{
+    }else if ($personType == 2) {
       // this is a pet sitter
       if($futureAppointments){
         // query for appts with dates >= right now
@@ -63,8 +65,23 @@ try {
         LEFT JOIN review ON review.appointmentID = appointment.appointmentID)
         WHERE appointment.petSitter = :personID AND DATE(startTime) < CURDATE() ORDER BY startTime ASC");
       }
+      #admin tables
+    } else {
+      if($futureAppointments){
+        // query for appts with dates >= right now
+        $q = $conn->prepare("SELECT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, appointment.appointmentID
+        FROM (appointment
+        INNER JOIN person ON appointment.petOwner = person.personID)
+        WHERE DATE(startTime) >= CURDATE() ORDER BY startTime ASC");
+      }else{
+        // query for appts with dates < right now
+        $q = $conn->prepare("SELECT DISTINCT person.personFName, person.personLName, person.email, appointment.startTime, appointment.duration, review.reviewText
+        FROM ((appointment
+        INNER JOIN person ON appointment.petOwner = person.personID) 
+        LEFT JOIN review ON review.appointmentID = appointment.appointmentID)
+        WHERE DATE(startTime) < CURDATE() ORDER BY startTime ASC");
+      }
     }
-
     // replace the placeholder with the personID
     $q->bindParam(':personID',$personID);
   }else{

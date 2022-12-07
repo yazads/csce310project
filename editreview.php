@@ -36,6 +36,17 @@
     echo $sql . "<br>" . $e->getMessage();
   }
 ?>
+    <div style="margin-top:1%; margin-left:95%;">
+      <a href="index.php"><button type="button" class="btn btn-outline-primary">Back</button></a>
+    </div> 
+    <div class = "wrap">
+        <!-- display appointment details to give the user a frame of reference for what to write in their review -->
+
+        <h2> Appointment Details </h2>
+        <?php
+        $futureAppointments = FALSE;
+        require 'assets/appointmentTable.php';
+        ?>
 
 <!DOCTYPE html>
   <div class = "wrap">
@@ -56,18 +67,6 @@
         echo "<input type='hidden' name='appointmentID' value='".$appointmentID."'>";
         // note that we need to add to database when we get to index.php
         $_SESSION['newReview'] = TRUE;
-<<<<<<< HEAD
-        ?>
-        <br>
-        <center><button class='btn btn-outline-primary' type='submit' name = 'updateReview'>Update Review</button></center>
-        <br>
-        <center><button class='btn btn-outline-primary' type='submit' style='background-color:red' name = 'deleteReview'>Delete Review</button></center>
-        </form>
-            
-    </div>
-  </div>
-  </body>
-=======
       ?>
 
       <br></br>
@@ -76,5 +75,4 @@
       <center><button class='btn btn-outline-primary' type='submit' style='background-color:red' name = 'deleteReview'>Delete Review</button></center>
     </form>
   </div>
->>>>>>> 87b15fdce0ad825c71155f3b2dc530affd488354
 </html>
