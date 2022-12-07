@@ -117,6 +117,51 @@ if($editPet){
   // set editPet back to false
   $_SESSION['editPet'] = FALSE;
 }
+
+if($editAcctInfo){
+  // update the pet
+  // check if post info is set before assigning variables
+  // otherwise we get annoying warnings on refresh
+  if(isset($_POST['newfname']) && isset($_POST['newlname']) && isset($_POST['newphone']) && isset($_POST['newstreet']) && isset($_POST['newcity']) && isset($_POST['newstate']) && isset($_POST['newzip']) && isset($_POST['newpassphrase'])){
+    $newfname = $_POST['newfname'];
+    $newlname = $_POST['newlname'];
+    $newphone = $_POST['newphone'];
+    $newstreet = $_POST['newstreet'];
+    $newcity = $_POST['newcity'];
+    $newstate = $_POST['newstate'];
+    $newzip = $_POST['newzip'];
+    $newpassphrase = $_POST['newpassphrase'];
+  }
+
+  // only update review in db if new petname, species, requirements, and (not new) petID are non-empty
+  if(!empty($newfname) && !empty($newlname) && !empty($newphone) && !empty($newstreet) && !empty($newcity) && !empty($newstate) && !empty($newzip) && !empty($newpassphrase)){
+    // try to update the database
+    try{
+      // use a prepared statement for the query to stop sql injections
+      $q = $conn->prepare("UPDATE PERSON SET personFName = :newFName, personLName = :newLname, phone = :newPhone, streetAddress = :newStreet, city = :newCity, USState = :newState, zipCode = :newZipcode, passphrase = :newPassphrase WHERE personID = :personID");
+      
+      // replace the placeholders with the petname, species, requirements, and petID
+      $q->bindParam(':newFName',$newfname);
+      $q->bindParam(':newLname',$newlname);
+      $q->bindParam(':newPhone',$newphone);
+      $q->bindParam(':newStreet',$newstreet);
+      $q->bindParam(':newCity',$newcity);
+      $q->bindParam(':newState',$newstate);
+      $q->bindParam(':newZipcode',$newzip);
+      $q->bindParam(':newPassphrase',$newpassphrase);
+      $q->bindParam(':personID',$personID);
+
+      // do the sql query
+      $q->execute();
+    }catch(PDOException $e) {
+      echo $sql . "<br>" . $e->getMessage();
+    }
+  }
+
+  // set editAcctInfo back to false
+  $_SESSION['editAcctInfo'] = FALSE;
+}
+require 'assets/getUserInfo.php';
 ?>
     <div class = "wrap">
             <?php if($personType != 2)require 'assets/petTable.php';?>
@@ -137,6 +182,7 @@ if($editPet){
             else
               echo "<p>You are a <b>Pet Sitter</b></p>";
             ?>
+            <a href='editacctinfo.php'><button type='button' class='btn btn-outline-primary'>Edit Account Info</button></a>
         </div>
     </div>
   </div>
