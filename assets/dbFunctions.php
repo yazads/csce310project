@@ -72,4 +72,85 @@
       echo $sql . "<br>" . $e->getMessage();
     }
   }
+}
+
+/* get pets associated with an appointment */
+function getPetsByAppointmentID($id){
+  // connect to db
+  require 'dbConnect.php';
+  try{
+    $q = $conn->prepare("SELECT petID FROM petAppointment WHERE appointmentID = :id");
+    // replace the placeholder
+    $q->bindParam(':id',$id);
+    // do the sql query
+    $q->execute();
+    $result = $q->fetchAll();
+    return $result;
+
+  }catch(PDOException $e) {
+    echo $sql . "<br>" . $e->getMessage();
+  }
+
+}
+
+/* get petname associated with petID */
+function getPetNameByPetID($id){
+  //connect to db
+  require 'dbConnect.php';
+  try{
+    $q = $conn->prepare("SELECT petName FROM pet WHERE petID = :id");
+    // replace the placeholder
+    $q->bindParam(':id',$id);
+    // do the sql query
+    $q->execute();
+    // store the result
+    $result = $q->fetch();
+
+    // only return petname if it exists, otherwise we get an annoying error
+    if(isset($result['petName'])){
+      return $result['petName'];
+    }else{
+      // return 'rover' if nothing so nothing breaks
+      return 'rover';
+    }
+  }catch(PDOException $e) {
+    echo $sql . "<br>" . $e->getMessage();
+  }
+}
+
+/* get the species for a pet based on their pet id */
+function getSpeciesByPetID($id){
+  //connect to db
+  require 'dbConnect.php';
+  try{
+    $q = $conn->prepare("SELECT species FROM pet WHERE petID = :id");
+    // replace the placeholder
+    $q->bindParam(':id',$id);
+    // do the sql query
+    $q->execute();
+    // store the result
+    $result = $q->fetch();
+    // only return species if it exists, otherwise we get an annoying error
+    if(isset($result['species'])){
+      if($result['species'] == 1){
+        return 'Dog';
+      }else if($result['species'] == 2){
+        return 'Cat';
+      }else if($result['species'] == 3){
+        return 'Fish';
+      }else if($result['species'] == 4){
+        return 'Bird';
+      }else if($result['species'] == 5){
+        return 'Monkey';
+      }else{
+        return 'Other';
+      }
+    }else{
+      // return 'Unknown' if nothing so nothing breaks
+      return 'Unknown';
+    }
+  }catch(PDOException $e) {
+    echo $sql . "<br>" . $e->getMessage();
+  }
+}
 ?>
