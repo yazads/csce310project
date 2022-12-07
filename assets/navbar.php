@@ -11,7 +11,6 @@
                     <ul class="dropdown-menu dropdown-menu-end" style="margin-right:10%;">
                     <li><a class="dropdown-item" href="index.php">Home</a></li>
                     <li><a class="dropdown-item" href="acctinfo.php">Account Info</a></li>
-                    <li><a class="dropdown-item" href="#">Something else</a></li>
                     <li><a class="dropdown-item" href="login.php">Sign Out</a></li>
                     </ul>
                 </span>
