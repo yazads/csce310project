@@ -41,7 +41,7 @@
         
         // do the sql query
         $q->execute();
-      }catch(PDOException $e) {
+      } catch(PDOException $e) {
         echo $sql . "<br>" . $e->getMessage();
       }
     }

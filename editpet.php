@@ -107,18 +107,9 @@
                 <br>
                 <center><button type="submit" class="btn btn-outline-primary" style="padding-top:1%;background-color:red" name='deletePet'>Delete Pet</button></a></center>
             </form>
-<<<<<<< HEAD
-        </div>
-        <?php 
-            // note that we need to update database when we get back
-            $_SESSION[ 'editPet' ] = TRUE;
-        ?>
-    </body>
-=======
     </div>
     <?php 
         // note that we need to update database when we get back
         $_SESSION[ 'editPet' ] = TRUE;
     ?>
->>>>>>> 87b15fdce0ad825c71155f3b2dc530affd488354
 </html>
