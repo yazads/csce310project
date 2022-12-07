@@ -14,7 +14,7 @@ if(isset($_POST['email'])){
 // query db for persontype, personID, and full name associated with the email
 try{
   // prepare the query
-  $q = $conn->prepare("SELECT personID, personFName, personLName, passphrase, personType, phone, streetAddress, city, USState, zipCode FROM PERSON WHERE email = :email");
+  $q = $conn->prepare("SELECT personID, personFName, personLName, passphrase, personType, phone, streetAddress, city, USState, zipCode FROM PERSON USE INDEX(personEmail) WHERE email = :email");
   // replace the placeholder with the email
   $q->bindParam(':email',$email);
   // do the sql query and store the result in an array
