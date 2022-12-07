@@ -36,8 +36,12 @@ try{
   echo $sql . "<br>" . $e->getMessage();
 }
 ?>
+    <div style="margin-top:1%; margin-left:95%;">
+      <a href="index.php"><button type="button" class="btn btn-outline-primary">Back</button></a>
+    </div> 
     <div class = "wrap">
         <!-- display appointment details to give the user a frame of reference for what to write in their review -->
+
         <h2> Appointment Details </h2>
         <?php
         $futureAppointments = FALSE;
