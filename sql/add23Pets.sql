@@ -14,7 +14,7 @@ INSERT INTO `pet`( `personID`, `petName`, `species`, `requirements`) VALUES (21,
 INSERT INTO `pet`( `personID`, `petName`, `species`, `requirements`) VALUES (21,'Fatcat','2','ellusive cat that is fat');
 INSERT INTO `pet`( `personID`, `petName`, `species`, `requirements`) VALUES (23,'Cisco','2','sibling of cat whose name I forgot');
 INSERT INTO `pet`( `personID`, `petName`, `species`, `requirements`) VALUES (23,'Poncho','2','I think the other cat was named poncho?');
-INSERT INTO `pet`( `personID`, `petName`, `species`, `requirements`) VALUES (1,'Madison','1','worldest freakiest dog');
+INSERT INTO `pet`( `personID`, `petName`, `species`, `requirements`) VALUES (1,'Madison','1','worldest freakiest-looking dog');
 INSERT INTO `pet`( `personID`, `petName`, `species`, `requirements`) VALUES (3,'Lucky','1','lives at the Stack');
 INSERT INTO `pet`( `personID`, `petName`, `species`, `requirements`) VALUES (5,'Jesse','1','the dog belonging to Chase');
 INSERT INTO `pet`( `personID`, `petName`, `species`, `requirements`) VALUES (7,'Balu','1','has some sort of skin condition');

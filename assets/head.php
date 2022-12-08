@@ -29,6 +29,12 @@
     case 'editacctinfo':
       $pageTitle = 'Edit Account';
       break;    
+    case 'createappointment':
+      $pageTitle = 'Create Appointment';
+      break;
+    case 'editappointment':
+      $pageTitle = 'Edit Appointment';
+      break;
     default:
     $pageTitle = '*ADD PAGE TO HEAD.PHP*';
   }
