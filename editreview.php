@@ -48,7 +48,7 @@
     <form method='post' action='index.php'>
     <?php
       $futureAppointments = FALSE;
-      require 'assets/appointmentTable2.php';
+      require 'assets/appointmentTable.php';
     ?>
       <h2><label for="newReviewText">Type New Review:</label></h2>
       

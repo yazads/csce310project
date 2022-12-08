@@ -180,14 +180,14 @@
     <div class = "fleft">
       <?php $futureAppointments = FALSE; ?>
       <h2>Previous Appointments</h2>
-      <?php require 'assets/appointmentTable2.php'; ?>
+      <?php require 'assets/appointmentTable.php'; ?>
     </div>
 
     <div class = "fright">
       <h2>Upcoming Appointments</h2>
       <?php
         $futureAppointments = TRUE;
-        require 'assets/appointmentTable2.php';
+        require 'assets/appointmentTable.php';
       ?>
     </div>
   </div>
