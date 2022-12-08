@@ -41,9 +41,9 @@
                 <input type="password" class="form-control" <?php echo "value=".$passphrase; ?> placeholder="Confirm Password" aria-label="Confirm" aria-describedby="basic-addon1">
             </div>
             
-            <center><button type="submit" class="btn btn-outline-primary">Update</button></a></center>
+            <center><button type="submit" class="btn btn-outline-primary">Update Account</button></a></center>
             <br></br>
-            <center><button type="submit" class="btn btn-outline-primary" style="padding-top:1%;background-color:red" name='deleteAcct'>Delete Account</button></a></center>
+            <center><button type="submit" class="btn btn-outline-danger" style="padding-top:1%" name='deleteAcct'>Delete Account</button></a></center>
         </form>
     </div>
     <?php 
