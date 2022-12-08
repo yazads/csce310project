@@ -25,7 +25,7 @@
 
             <div class="input-group mb-3">
                 <span class="input-group-text">Address</span>
-                <input type="text" <?php echo "value=".$streetAddress; ?> aria-label="Address" class="form-control" name="newstreet">
+                <input type="text" <?php echo "value='$streetAddress'"; ?> aria-label="Address" class="form-control" name="newstreet">
                 <input type="text" <?php echo "value=".$city; ?> aria-label="City" class="form-control" name="newcity">
                 <input type="text" <?php echo "value=".$usState; ?> aria-label="State" class="form-control" name="newstate">
                 <input type="text" <?php echo "value=".$zipCode; ?> aria-label="Zip" class="form-control" name="newzip">
