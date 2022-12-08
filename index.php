@@ -171,7 +171,127 @@
     $_SESSION['comeFromLogin'] = FALSE;
   }
   require 'assets/head.php';
-  require 'assets/navbar.php'
+require 'assets/navbar.php';
+
+if($newAppt){
+  // check if post info is set before assigning variables
+  // otherwise we get annoying warnings on refresh
+  if(isset($_POST["petName"]) && isset($_POST["timedate-y"]) && isset($_POST["timedate-m"]) && isset($_POST["timedate-d"]) && isset($_POST["timedate-h"]) && isset($_POST["timedate-M"]) && isset($_POST["timedate-s"]) && isset($_POST["duration"])){
+    $petname = $_POST["petName"];
+    $timeanddate = $_POST["timedate-y"] . "-" . $_POST["timedate-m"] . "-" . $_POST["timedate-d"] . " " . $_POST["timedate-h"] . ":" . $_POST["timedate-M"] . ":" . $_POST["timedate-s"];
+    $duration = $_POST["duration"];  
+  }
+
+  // to prevent adding empty rows to the db after refreshing, only connect to db if attributes have info
+  if(!empty($petname) && !empty($timeanddate) && !empty($duration)){
+    try {
+      // prepare an sql query
+      $q = $conn->prepare("INSERT INTO appointment (appointmentID, petOwner, petSitter, startTime, duration)
+      VALUES (DEFAULT, :petOwner, NULL, :startTime, :duration)");
+    
+
+      $q->bindParam(':petOwner',$personID);
+      $q->bindParam(':startTime', $timeanddate);
+      $q->bindParam(':duration', $duration);
+      
+      // do the sql query
+      $q->execute();
+      $q = $conn->prepare("SELECT MAX(appointmentID) FROM appointment");
+      $q->execute();
+      $tempAppID = $q->fetch();
+      $q = $conn->prepare("INSERT INTO petappointment (petID, appointmentID) VALUES (:petname, :appointmentid)");
+      $q->bindParam(':petname', $petname);
+      $q->bindParam(':appointmentid', $tempAppID[0]);
+      $q->execute();
+    } catch(PDOException $e) {
+      echo "<br>" . $e->getMessage();
+    }
+  }
+  // set newAppt back to false
+  $_SESSION['newAppt'] = FALSE;
+}
+
+if($selectAppt){
+  // check if post info is set before assigning variables
+  // otherwise we get annoying warnings on refresh
+  if(isset($_POST["apptID"])){
+    $apptID = $_POST["apptID"];
+  }
+
+  // to prevent adding empty rows to the db after refreshing, only connect to db if attributes have info
+  if(!empty($apptID)){
+    try {
+      // prepare an sql query
+      $q = $conn->prepare("UPDATE appointment SET petSitter = :petSitter WHERE appointmentID =");
+    
+      $q->bindParam(':petSitter',$personID);
+      $q->bindParam(':apptID',$apptID);
+      // do the sql query
+      $q->execute();
+
+    } catch(PDOException $e) {
+      echo "<br>" . $e->getMessage();
+    }
+  }
+  // set newAppt back to false
+  $_SESSION['selectAppt'] = FALSE;
+}
+if($editAppt){
+  // see if we need to delete or update a pet
+  if(isset($_POST['deleteAppt'])){
+    // check if post info is set before assigning variables
+    // otherwise we get annoying warnings on refresh
+    if(isset($_POST['apptID'])){
+      $apptID = $_POST['apptID'];
+    }
+
+    // if petID is non-empty, attempt to delete associated pet from db 
+
+      try{
+        $q = $conn->prepare("DELETE FROM petappointment WHERE appointmentID = :apptID");
+
+        $q->bindParam(':apptID', $apptID);
+        $q->execute();
+        // use a prepared statement for the query to stop sql injections
+        $q = $conn->prepare("DELETE FROM appointment WHERE appointmentID = :apptID");
+        // replace the placeholder with the apptID
+        $q->bindParam(':apptID',$apptID);
+
+        // do the sql query
+        $q->execute();
+      }catch(PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+      }
+  }else{
+    // update the pet
+    // check if post info is set before assigning variables
+    // otherwise we get annoying warnings on refresh
+    if(isset($_POST["apptID"]) && isset($_POST["timedate-y"]) && isset($_POST["timedate-m"]) && isset($_POST["timedate-d"]) && isset($_POST["timedate-h"]) && isset($_POST["timedate-M"]) && isset($_POST["timedate-s"]) && isset($_POST["duration"])){
+      $apptID = $_POST["apptID"];
+      $timeanddate = $_POST["timedate-y"] . "-" . $_POST["timedate-m"] . "-" . $_POST["timedate-d"] . " " . $_POST["timedate-h"] . ":" . $_POST["timedate-M"] . ":" . $_POST["timedate-s"];
+      $duration = $_POST["duration"];  
+    }
+
+
+      // try to update the database
+      try{
+        
+        $q = $conn->prepare("UPDATE appointment SET startTime = :timeanddate, duration = :duration WHERE appointmentID = :apptID");
+        // replace the placeholders with the petname, species, requirements, and petID
+        $q->bindParam(':timeanddate',$timeanddate);
+        $q->bindParam(':duration',$duration);
+        $q->bindParam(':apptID',$apptID);
+
+        // do the sql query
+        $q->execute();
+      }catch(PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+      }
+  }
+  // set editPet back to false
+  $_SESSION['editAppt'] = FALSE;
+}
+
 ?>
 
 <html>

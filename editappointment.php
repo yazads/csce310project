@@ -29,7 +29,7 @@
 
 <!DOCTYPE html>
     <div style="margin-top:1%; margin-left:95%;">
-        <a href="acctinfo.php"><button type="button" class="btn btn-outline-primary">Back</button></a>
+        <a href="index.php"><button type="button" class="btn btn-outline-primary">Back</button></a>
     </div>    
     <div>
         <div>
@@ -40,7 +40,7 @@
         <!-- <?php require 'assets/petTable.php'; ?> -->
         <br><br>
             <!-- Form to edit the pet -->
-            <form action="acctinfo.php" method="post">
+            <form action="index.php" method="post">
                 <!--<?php require 'assets/emailDropDown.php'?>-->
                 <div class="input-group mb-3">
                     <span class="input-group-text">Appointments</span>
@@ -63,7 +63,7 @@
                 <br>
                 <center><button type="submit" class="btn btn-outline-primary" style="padding-top:1%;" name='updateAppt'>Update Appointment</button></a></center>
                 <br>
-                <center><button type="submit" class="btn btn-outline-primary" style="padding-top:1%;background-color:red" name='deleteAppt'>Delete Appointment</button></a></center>
+                <center><button type="submit" class="btn btn-outline-danger" style="padding-top:1%" name='deleteAppt'>Delete Appointment</button></a></center>
             </form>
     </div>
     <?php 
