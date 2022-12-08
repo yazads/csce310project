@@ -10,7 +10,7 @@
         function current() {
             $curVal = parent::current();
             if(parent::key() == 'personID'){
-                return "<form action='editacctinfo.php' method='post' id='editPet'><input type='hidden' name='personID' value='".parent::key()."'>
+                return "<form action='editacctinfo.php' method='post' id='editAcctInfo'><input type='hidden' name='personID' value='".parent::key()."'>
                 <td style='width:150px;border:1px solid black;'> <center><button class='btn btn-outline-primary' type='submit' >Edit User</button></center></form></td>";
             }
             else{
