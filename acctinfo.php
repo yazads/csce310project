@@ -122,39 +122,64 @@
     // update the pet
     // check if post info is set before assigning variables
     // otherwise we get annoying warnings on refresh
-    if(isset($_POST['newfname']) && isset($_POST['newlname']) && isset($_POST['newphone']) && isset($_POST['newstreet']) && isset($_POST['newcity']) && isset($_POST['newstate']) && isset($_POST['newzip']) && isset($_POST['newpassphrase'])){
-      $newfname = $_POST['newfname'];
-      $newlname = $_POST['newlname'];
-      $newphone = $_POST['newphone'];
-      $newstreet = $_POST['newstreet'];
-      $newcity = $_POST['newcity'];
-      $newstate = $_POST['newstate'];
-      $newzip = $_POST['newzip'];
-      $newpassphrase = $_POST['newpassphrase'];
-    }
+    if(isset($_POST['deleteAcct'])){
+      // delete the account
+      // check if post info is set before assigning variables
+      // otherwise we get annoying warnings on refresh
+      if(isset($_POST['personID'])){
+        $personID = $_POST['personID'];
+      }
 
-    // only update review in db if new petname, species, requirements, and (not new) petID are non-empty
-    if(!empty($newfname) && !empty($newlname) && !empty($newphone) && !empty($newstreet) && !empty($newcity) && !empty($newstate) && !empty($newzip) && !empty($newpassphrase)){
-      // try to update the database
-      try{
-        // use a prepared statement for the query to stop sql injections
-        $q = $conn->prepare("UPDATE PERSON SET personFName = :newFName, personLName = :newLname, phone = :newPhone, streetAddress = :newStreet, city = :newCity, USState = :newState, zipCode = :newZipcode, passphrase = :newPassphrase WHERE personID = :personID");
-        
-        // replace the placeholders with the petname, species, requirements, and petID
-        $q->bindParam(':newFName',$newfname);
-        $q->bindParam(':newLname',$newlname);
-        $q->bindParam(':newPhone',$newphone);
-        $q->bindParam(':newStreet',$newstreet);
-        $q->bindParam(':newCity',$newcity);
-        $q->bindParam(':newState',$newstate);
-        $q->bindParam(':newZipcode',$newzip);
-        $q->bindParam(':newPassphrase',$newpassphrase);
-        $q->bindParam(':personID',$personID);
+      // if personID is non-empty, attempt to delete associated person from db 
+      if(!empty($personID)){
+        try{
+          // use a prepared statement for the query to stop sql injections
+          $q = $conn->prepare("DELETE FROM PERSON WHERE personID = :personID");
+          // replace the placeholder with the apptID
+          $q->bindParam(':personID',$personID);
 
-        // do the sql query
-        $q->execute();
-      }catch(PDOException $e) {
-        echo $sql . "<br>" . $e->getMessage();
+          // do the sql query
+          $q->execute();
+          header('Location: login.php');
+        }catch(PDOException $e) {
+          echo $sql . "<br>" . $e->getMessage();
+        }
+      }
+    }else{
+      if(isset($_POST['newfname']) && isset($_POST['newlname']) && isset($_POST['newphone']) && isset($_POST['newstreet']) && isset($_POST['newcity']) && isset($_POST['newstate']) && isset($_POST['newzip']) && isset($_POST['newpassphrase'])){
+        $newfname = $_POST['newfname'];
+        $newlname = $_POST['newlname'];
+        $newphone = $_POST['newphone'];
+        $newstreet = $_POST['newstreet'];
+        $newcity = $_POST['newcity'];
+        $newstate = $_POST['newstate'];
+        $newzip = $_POST['newzip'];
+        $newpassphrase = $_POST['newpassphrase'];
+      }
+  
+      // only update review in db if new petname, species, requirements, and (not new) petID are non-empty
+      if(!empty($newfname) && !empty($newlname) && !empty($newphone) && !empty($newstreet) && !empty($newcity) && !empty($newstate) && !empty($newzip) && !empty($newpassphrase)){
+        // try to update the database
+        try{
+          // use a prepared statement for the query to stop sql injections
+          $q = $conn->prepare("UPDATE PERSON SET personFName = :newFName, personLName = :newLname, phone = :newPhone, streetAddress = :newStreet, city = :newCity, USState = :newState, zipCode = :newZipcode, passphrase = :newPassphrase WHERE personID = :personID");
+          
+          // replace the placeholders with the petname, species, requirements, and petID
+          $q->bindParam(':newFName',$newfname);
+          $q->bindParam(':newLname',$newlname);
+          $q->bindParam(':newPhone',$newphone);
+          $q->bindParam(':newStreet',$newstreet);
+          $q->bindParam(':newCity',$newcity);
+          $q->bindParam(':newState',$newstate);
+          $q->bindParam(':newZipcode',$newzip);
+          $q->bindParam(':newPassphrase',$newpassphrase);
+          $q->bindParam(':personID',$personID);
+  
+          // do the sql query
+          $q->execute();
+        }catch(PDOException $e) {
+          echo $sql . "<br>" . $e->getMessage();
+        }
       }
     }
 
@@ -172,32 +197,33 @@
 
     <!-- Account Information Display -->
     <div <?php if($personType != 2) echo "class='fright'";?>>
-      <h2>My Info</h2>
-      <br></br>
       <?php
-        echo "<p>First Name: " . $personFName . "</p>";
-        echo "<p>Last Name: " . $personLName . "</p>";
-        echo "<p>Email: " . $email . "</p>";
-        echo "<p>Phone: " . $phone . "</p>";
-        echo "<p>Street: " . $streetAddress . "</p>";
-        echo "<p>City: " . $city . "</p>";
-        echo "<p>State: " . $usState . "</p>";
-        echo "<p>Zip: " . $zipCode . "</p>";
-        if($personType == '1'){
-          echo "<p>You are a <b>Pet Owner</b></p>";
-        }
-        else if($personType == '2'){
-          echo "<p>You are a <b>Pet Sitter</b></p>";
-        }
-        else{
-          echo "<p>You are an <b>Admin</b></p>";
+        if($personType != 3){
+          echo "<h2>My Info</h2>";
+          echo "<br></br>";
+          echo "<p>First Name: " . $personFName . "</p>";
+          echo "<p>Last Name: " . $personLName . "</p>";
+          echo "<p>Email: " . $email . "</p>";
+          echo "<p>Phone: " . $phone . "</p>";
+          echo "<p>Street: " . $streetAddress . "</p>";
+          echo "<p>City: " . $city . "</p>";
+          echo "<p>State: " . $usState . "</p>";
+          echo "<p>Zip: " . $zipCode . "</p>";
+          if($personType == '1'){
+            echo "<p>You are a <b>Pet Owner</b></p>";
+          }
+          else if($personType == '2'){
+            echo "<p>You are a <b>Pet Sitter</b></p>";
+          }
+          else{
+            echo "<p>You are an <b>Admin</b></p>";
+          }
+          echo "<a href='editacctinfo.php'><button type='button' class='btn btn-outline-primary'>Edit Account Info</button></a>";
         }
       ?>
-      <a href='editacctinfo.php'><button type='button' class='btn btn-outline-primary'>Edit Account Info</button></a>
-
-      <br></br>
-      
+    
       <center> <?php if($personType == '3')  echo "<h3>All User Information</h3>" ?> </center>
+      <br></br>
       <center> <?php if($personType == '3')  require 'assets/adminUsersTable.php'; ?> </center>
     </div>
   </div>

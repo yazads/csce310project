@@ -38,17 +38,18 @@
 ?>
 
 <!DOCTYPE html>
+  <div style="margin-top:1%; margin-left:95%;">
+    <a href="index.php"><button type="button" class="btn btn-outline-primary">Back</button></a>
+  </div>
   <div class = "wrap">
     <!-- display appointment details to give the user a frame of reference for what to write in their review -->
     <h2> Appointment Details </h2>
-    
+    <!-- form to update review -->
+    <form method='post' action='index.php'>
     <?php
       $futureAppointments = FALSE;
       require 'assets/appointmentTable.php';
     ?>
-
-    <!-- form to update review -->
-    <form method='post' action='index.php'>
       <h2><label for="newReviewText">Type New Review:</label></h2>
       
       <?php 
@@ -61,7 +62,7 @@
       <br></br>
       <center><button class='btn btn-outline-primary' type='submit' name = 'updateReview'>Update Review</button></center>
       <br></br>
-      <center><button class='btn btn-outline-primary' type='submit' style='background-color:red' name = 'deleteReview'>Delete Review</button></center>
+      <center><button class='btn btn-outline-danger' type='submit' name = 'deleteReview'>Delete Review</button></center>
     </form>
   </div>
 </html>
