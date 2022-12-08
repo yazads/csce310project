@@ -186,11 +186,16 @@
     <div class = "fright">
       <h2>Upcoming Appointments</h2>
       <?php
+        if($personType != 2){
+          echo "<button class='btn btn-outline-primary' onclick=\"location.href='createappointment.php'\">New Appointment</button>";
+        }else if($personType != 1){
+          echo "<button class='btn btn-outline-primary' onclick=\"location.href='selectappointment.php'\">Pet Sitter Select Appointment</button>";
+        }
+        echo "<br></br>";
         $futureAppointments = TRUE;
         require 'assets/appointmentTable.php';
-      ?>
-      <button class='btn btn-outline-primary' onclick="location.href='createappointment.php'">New Appointment</button>
-      <button class='btn btn-outline-primary' onclick="location.href='selectappointment.php'">Pet Sitter Select Appointment</button>
+         
+      ?>        
       
     </div>
   </div>
