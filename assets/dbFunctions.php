@@ -16,7 +16,7 @@
   /* get all emails with personType $t */ 
   function getEmailsByPersonType($t){
     // connect to the db
-    dbConnect();
+    dbConnect($conn);
     try{
       // query db for emails belonging to all people with person type $personType
       $q = $conn->prepare("SELECT email FROM person WHERE personType = :personType");
