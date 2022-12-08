@@ -46,33 +46,33 @@
     }
   }
 
-  /* get the personID associated with an email */ 
-  function getPersonIDByEmail($email){
-    // get the personID associated with the email
-    try{
-      require 'dbConnect.php';
-      // use a prepared statement for the query to stop sql injections
-      $q = $conn->prepare('SELECT personID FROM person WHERE email = :email');
-      // replace the placeholder
-      $q->bindParam(':email',$email);
-      // do the sql query
-      $q->execute();
+/* get the personID associated with an email */ 
+function getPersonIDByEmail($email){
+  // get the personID associated with the email
+  try{
+    require 'dbConnect.php';
+    // use a prepared statement for the query to stop sql injections
+    $q = $conn->prepare('SELECT personID FROM person WHERE email = :email');
+    // replace the placeholder
+    $q->bindParam(':email',$email);
+    // do the sql query
+    $q->execute();
 
-      // store the result
-      $result = $q->fetch();
+    // store the result
+    $result = $q->fetch();
 
-      // only return personID if it exists, otherwise we get an annoying error
-      if(isset($result['personID'])){
-        return $result['personID'];
-      }else{
-        // return 0 if no personID so nothing breaks
-        return '0';
-      }
-    }catch(PDOException $e) {
-      echo $sql . "<br>" . $e->getMessage();
+    // only return personID if it exists, otherwise we get an annoying error
+    if(isset($result['personID'])){
+      return $result['personID'];
+    }else{
+      // return 0 if no personID so nothing breaks
+      return '0';
     }
+  }catch(PDOException $e) {
+    echo $sql . "<br>" . $e->getMessage();
   }
 }
+
 
 /* get pets associated with an appointment */
 function getPetsByAppointmentID($id){

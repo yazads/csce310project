@@ -44,14 +44,12 @@
   <div class = "wrap">
     <!-- display appointment details to give the user a frame of reference for what to write in their review -->
     <h2> Appointment Details </h2>
-    
-    <?php
-      $futureAppointments = FALSE;
-      require 'assets/appointmentTable.php';
-    ?>
-
     <!-- form to update review -->
     <form method='post' action='index.php'>
+    <?php
+      $futureAppointments = FALSE;
+      require 'assets/appointmentTable2.php';
+    ?>
       <h2><label for="newReviewText">Type New Review:</label></h2>
       
       <?php 

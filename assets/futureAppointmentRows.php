@@ -34,4 +34,5 @@ class FutureTableRows extends RecursiveIteratorIterator {
       echo "</tr>" . "\n";
     }
   }
+}
 ?>

@@ -9,8 +9,8 @@ SELECT DISTINCT
     person2.email AS sitterEmail, 
     appointment.startTime, 
     appointment.duration, 
-    review.reviewText, 
-    appointment.appointmentID
+    appointment.appointmentID,
+    review.reviewText
  FROM 
     (((appointment
  INNER JOIN 
