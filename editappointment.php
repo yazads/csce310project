@@ -41,7 +41,7 @@
         <br><br>
             <!-- Form to edit the pet -->
             <form action="acctinfo.php" method="post">
-                <?php require 'assets/emailDropDown.php'?>
+                <!--<?php require 'assets/emailDropDown.php'?>-->
                 <div class="input-group mb-3">
                     <span class="input-group-text">Appointments</span>
                     <?php require 'assets/editappointmentDropDown.php' ?>

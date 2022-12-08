@@ -1,7 +1,11 @@
 <?php
   $page = pathinfo($_SERVER['REQUEST_URI'])['filename'];
   if($page == 'editappointment'){
-    $appts = getApptIDsbyPersonID($personID);
+    if ($personType == 1) {
+      $appts = getApptIDsbyPersonID($personID);
+    } else {
+      $appts = getAllApptIDs();
+    }
   }
 
   echo "<select class='form-control' id='sel1' name='apptID'>";
@@ -20,15 +24,26 @@
 
   function getApptIDsbyPersonID($id) {
     require 'dbConnect.php';
-    try {
-      // query db for email belonging to this pet's owner
-      $q = $conn->prepare("SELECT appointment.appointmentID, pet.petID, pet.petName FROM appointment INNER JOIN petappointment ON appointment.appointmentID = petappointment.appointmentID INNER JOIN pet ON petappointment.petID = pet.petID WHERE appointment.petOwner = :id");
-      // replace the placeholder with the person type
-      $q->bindParam(':id',$id);
-      $q->execute();
-      return $q->fetchAll();
-    } catch(PDOException $e) {
-      echo "Error: " . $e->getMessage();
-    }
+      try {
+        // query db for email belonging to this pet's owner
+        $q = $conn->prepare("SELECT appointment.appointmentID, pet.petID, pet.petName FROM appointment INNER JOIN petappointment ON appointment.appointmentID = petappointment.appointmentID INNER JOIN pet ON petappointment.petID = pet.petID WHERE appointment.petOwner = :id");
+        // replace the placeholder with the person type
+        $q->bindParam(':id',$id);
+        $q->execute();
+        return $q->fetchAll();
+      } catch(PDOException $e) {
+        echo "Error: " . $e->getMessage();
+      }
+  }
+  function getAllApptIDs() {
+    require 'dbConnect.php';
+      try {
+        // query db for email belonging to this pet's owner
+        $q = $conn->prepare("SELECT appointment.appointmentID, pet.petID, pet.petName FROM appointment INNER JOIN petappointment ON appointment.appointmentID = petappointment.appointmentID INNER JOIN pet ON petappointment.petID = pet.petID");
+        $q->execute();
+        return $q->fetchAll();
+      } catch(PDOException $e) {
+        echo "Error: " . $e->getMessage();
+      }
   }
 ?>
