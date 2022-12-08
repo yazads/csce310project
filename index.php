@@ -190,6 +190,8 @@
         require 'assets/appointmentTable.php';
       ?>
       <button class='btn btn-outline-primary' onclick="location.href='createappointment.php'">New Appointment</button>
+      <button class='btn btn-outline-primary' onclick="location.href='selectappointment.php'">Pet Sitter Select Appointment</button>
+      
     </div>
   </div>
 </html>
