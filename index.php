@@ -189,6 +189,7 @@
         $futureAppointments = TRUE;
         require 'assets/appointmentTable.php';
       ?>
+      <button class='btn btn-outline-primary' href='createappointment.php'>New Appointment</button>
     </div>
   </div>
 </html>
