@@ -38,7 +38,7 @@
 
             <div class="input-group mb-3">
                 <span class="input-group-text" id="basic-addon1">Confirm Password</span>
-                <input type="password" class="form-control" placeholder="Confirm Password" aria-label="Confirm" aria-describedby="basic-addon1">
+                <input type="password" class="form-control" <?php echo "value=".$passphrase; ?> placeholder="Confirm Password" aria-label="Confirm" aria-describedby="basic-addon1">
             </div>
             
             <center><button type="submit" class="btn btn-outline-primary">Update</button></a></center>
