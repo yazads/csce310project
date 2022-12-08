@@ -87,6 +87,31 @@
     $_SESSION['newAppt'] = FALSE;
   }
 
+  if($selectAppt){
+    // check if post info is set before assigning variables
+    // otherwise we get annoying warnings on refresh
+    if(isset($_POST["apptID"])){
+      $apptID = $_POST["apptID"];
+    }
+
+    // to prevent adding empty rows to the db after refreshing, only connect to db if attributes have info
+    if(!empty($apptID)){
+      try {
+        // prepare an sql query
+        $q = $conn->prepare("UPDATE appointment SET petSitter = :petSitter WHERE appointmentID = :apptID");
+      
+        $q->bindParam(':petSitter',$personID);
+        $q->bindParam(':apptID',$apptID);
+        // do the sql query
+        $q->execute();
+
+      } catch(PDOException $e) {
+        echo "<br>" . $e->getMessage();
+      }
+    }
+    // set newAppt back to false
+    $_SESSION['selectAppt'] = FALSE;
+  }
   
 
   if($editPet){

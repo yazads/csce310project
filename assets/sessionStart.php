@@ -5,6 +5,7 @@
     $newAppt = $_SESSION['newAppt'];
     $editPet = $_SESSION[ 'editPet' ];
     $editAppt = $_SESSION['editAppt'];
+    $selectAppt = $_SESSION['selectAppt'];
     $newReview = $_SESSION['newReview'];
     $comeFromLogin = $_SESSION['comeFromLogin'];
     $editAcctInfo = $_SESSION['editAcctInfo'];
