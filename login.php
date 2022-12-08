@@ -27,6 +27,8 @@
             $_SESSION['newReview'] = FALSE;
             $_SESSION['editAcctInfo'] = FALSE;
             $_SESSION['comeFromLogin'] = TRUE;
+            $_SESSION['newAppt'] = FALSE;
+        $_SESSION['editAppt'] = FALSE;
 
             // unset email session var
             unset($_SESSION[ 'email' ]);
