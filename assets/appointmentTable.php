@@ -113,14 +113,17 @@ try{
       if($curKey == 'appointmentID'){
         $apptID = $curVal;
         // store apptid in a hidden form
-        echo "<form action='editreview.php' method='post' id='editReview'><input type='hidden' name='appointmentID' value='".$apptID."'>";
+        if (!$futureAppointments || $page == 'index') {
+          echo "<form action='editreview.php' method='post' id='editReview'>";
+        }
+        echo "<input type='hidden' name='appointmentID' value='".$apptID."'>";
 
         // display pet info
         require 'displayPetInfo.php';
 
         //display edit appt button (if future appt & on index)
         if($futureAppointments && $page == 'index'){
-          echo "</td><td style='width:150px;border:1px solid black;'> <center><button class='btn btn-outline-primary' type='submit'>Edit Appointment</button></center></form>";
+          echo "</td><td style='width:150px;border:1px solid black;'> <center><button class='btn btn-outline-primary' onclick=\"location.href='createappointment.php'\"'>Edit Appointment</button></center>";
         }
       }else if($curKey == 'reviewText'){
         // display edit review button (if on index & not pet sitter)
