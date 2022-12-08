@@ -197,32 +197,33 @@
 
     <!-- Account Information Display -->
     <div <?php if($personType != 2) echo "class='fright'";?>>
-      <h2>My Info</h2>
-      <br></br>
       <?php
-        echo "<p>First Name: " . $personFName . "</p>";
-        echo "<p>Last Name: " . $personLName . "</p>";
-        echo "<p>Email: " . $email . "</p>";
-        echo "<p>Phone: " . $phone . "</p>";
-        echo "<p>Street: " . $streetAddress . "</p>";
-        echo "<p>City: " . $city . "</p>";
-        echo "<p>State: " . $usState . "</p>";
-        echo "<p>Zip: " . $zipCode . "</p>";
-        if($personType == '1'){
-          echo "<p>You are a <b>Pet Owner</b></p>";
-        }
-        else if($personType == '2'){
-          echo "<p>You are a <b>Pet Sitter</b></p>";
-        }
-        else{
-          echo "<p>You are an <b>Admin</b></p>";
+        if($personType != 3){
+          echo "<h2>My Info</h2>";
+          echo "<br></br>";
+          echo "<p>First Name: " . $personFName . "</p>";
+          echo "<p>Last Name: " . $personLName . "</p>";
+          echo "<p>Email: " . $email . "</p>";
+          echo "<p>Phone: " . $phone . "</p>";
+          echo "<p>Street: " . $streetAddress . "</p>";
+          echo "<p>City: " . $city . "</p>";
+          echo "<p>State: " . $usState . "</p>";
+          echo "<p>Zip: " . $zipCode . "</p>";
+          if($personType == '1'){
+            echo "<p>You are a <b>Pet Owner</b></p>";
+          }
+          else if($personType == '2'){
+            echo "<p>You are a <b>Pet Sitter</b></p>";
+          }
+          else{
+            echo "<p>You are an <b>Admin</b></p>";
+          }
+          echo "<a href='editacctinfo.php'><button type='button' class='btn btn-outline-primary'>Edit Account Info</button></a>";
         }
       ?>
-      <a href='editacctinfo.php'><button type='button' class='btn btn-outline-primary'>Edit Account Info</button></a>
-
-      <br></br>
-      
+    
       <center> <?php if($personType == '3')  echo "<h3>All User Information</h3>" ?> </center>
+      <br></br>
       <center> <?php if($personType == '3')  require 'assets/adminUsersTable.php'; ?> </center>
     </div>
   </div>
