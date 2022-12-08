@@ -15,7 +15,7 @@ SELECT DISTINCT
     (((appointment
  INNER JOIN 
     person AS person1 ON appointment.petOwner = person1.personID)
- INNER JOIN 
+ LEFT JOIN 
     person AS person2 ON appointment.petSitter = person2.personID) 
  LEFT JOIN 
     review ON appointment.appointmentID = review.appointmentID)
