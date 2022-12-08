@@ -14,26 +14,26 @@
         <form action="acctinfo.php" method="post">
             <div class="input-group mb-3">
                 <span class="input-group-text">First and Last name</span>
-                <input type="text" placeholder="First Name" aria-label="First name" class="form-control"  <?php echo "value=".$personFName; ?> name="newfname">
-                <input type="text" placeholder="Last Name" aria-label="Last name" class="form-control" <?php echo "value=".$personLName; ?> name="newlname">
+                <input type="text" placeholder="First Name" aria-label="First name" class="form-control"  <?php echo "value='$personFName'"; ?> name="newfname">
+                <input type="text" placeholder="Last Name" aria-label="Last name" class="form-control" <?php echo "value='$personLName'"; ?> name="newlname">
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text" id="basic-addon1">Phone Number</span>
-                <input type="text" class="form-control" <?php echo "value=".$phone; ?> placeholder="123-456-7890" aria-label="Phone" aria-describedby="basic-addon1" name="newphone">
+                <input type="text" class="form-control" <?php echo "value='$phone'"; ?> placeholder="123-456-7890" aria-label="Phone" aria-describedby="basic-addon1" name="newphone">
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text">Address</span>
                 <input type="text" <?php echo "value='$streetAddress'"; ?> aria-label="Address" class="form-control" name="newstreet">
-                <input type="text" <?php echo "value=".$city; ?> aria-label="City" class="form-control" name="newcity">
-                <input type="text" <?php echo "value=".$usState; ?> aria-label="State" class="form-control" name="newstate">
-                <input type="text" <?php echo "value=".$zipCode; ?> aria-label="Zip" class="form-control" name="newzip">
+                <input type="text" <?php echo "value='$city'"; ?> aria-label="City" class="form-control" name="newcity">
+                <input type="text" <?php echo "value='$usState'"; ?> aria-label="State" class="form-control" name="newstate">
+                <input type="text" <?php echo "value='$zipCode'"; ?> aria-label="Zip" class="form-control" name="newzip">
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text" id="basic-addon1">Password</span>
-                <input type="password" class="form-control" <?php echo "value=".$passphrase; ?> aria-label="PW" aria-describedby="basic-addon1" name="newpassphrase">
+                <input type="password" class="form-control" <?php echo "value='$passphrase'"; ?> aria-label="PW" aria-describedby="basic-addon1" name="newpassphrase">
             </div>
 
             <div class="input-group mb-3">
