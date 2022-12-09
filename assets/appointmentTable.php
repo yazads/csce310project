@@ -113,7 +113,15 @@ try{
       if($curKey == 'appointmentID'){
         $apptID = $curVal;
         // store apptid in a hidden form
-        echo "<form action='editappointment.php' method='post' id='editReview'>";
+        $buttonPage = '';
+        if(!$futureAppointments){
+          // button should go to editreview.php
+          $buttonPage = 'editreview.php';
+        }else{
+          // button should go to editappointment.php
+          $buttonPage = 'editappointment.php';
+        }
+        echo "<form action='$buttonPage' method='post' id='editReview'>";
         echo "<input type='hidden' name='appointmentID' value='".$apptID."'>";
 
         // display pet info
