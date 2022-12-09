@@ -121,15 +121,19 @@ try{
           // button should go to editappointment.php
           $buttonPage = 'editappointment.php';
         }
-        echo "<form action='$buttonPage' method='post' id='editReview'>";
-        echo "<input type='hidden' name='appointmentID' value='".$apptID."'>";
+        
+        // only store appt info if we're in future appts or not a pet sitter
+        if($personType != 2 || $futureAppointments){
+          echo "<form action='".$buttonPage."' method='post' >";
+          echo "<input type='hidden' name='appointmentID' value='".$apptID."'>";
+        }
 
         // display pet info
         require 'displayPetInfo.php';
 
         //display edit appt button (if future appt & on index)
         if($futureAppointments && $page == 'index'){
-          echo "</td><td style='width:150px;border:1px solid black;'> <center><button class='btn btn-outline-primary' type='submit'>Edit Appointment</button></center></form>";
+          echo "</td><td style='width:150px;border:1px solid black;'><center><button  class='btn btn-outline-primary' type='submit'>Edit Appointment</button></center></form>";
         }
       }else if($curKey == 'reviewText'){
         // display edit review button (if on index & not pet sitter)
