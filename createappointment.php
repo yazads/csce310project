@@ -13,7 +13,7 @@
         <h1 style="text-align:center; margin-bottom:5%;"> New Appointment </h1>
     </div>
     <div style="margin-right:30%; margin-left:30%;">
-        <form action="imdex.php" method="post">
+        <form action="index.php" method="post">
             
             <div class="input-group">
                 <span class="input-group-text">Pet</span>
