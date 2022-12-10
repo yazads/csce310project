@@ -3,6 +3,49 @@
     require 'assets/getUserInfo.php';
     require 'assets/head.php';
     require 'assets/navbar.php';
+
+    // if we're admin, then we need to get the userID passed from acctinfo.php
+    if($personType == 3){
+        // get personID passed on from previous page
+        if(isset($_POST['personID'])){
+            $personID = $_POST['personID'];
+            
+            // if not set, set session var personID to the personID (otherwise refresh breaks the page)
+            if(!isset($_SESSION[ 'personID'])){
+            $_SESSION[ 'personID' ] = $personID;
+            }
+        }else{
+            $personID = $_SESSION[ 'personID' ];
+        }
+    }
+
+    require 'assets/dbConnect.php';
+    // query db for all the info associated with the personID
+    try{
+        // prepare the query
+        $q = $conn->prepare("SELECT personFName, personLName, email, passphrase, personType, phone, streetAddress, city, USState, zipCode FROM PERSON WHERE personID = :personID");
+        // replace the placeholder with the email
+        $q->bindParam(':personID',$personID);
+        // do the sql query and store the result in an array
+        $q->execute();
+        $result = $q->fetch();
+
+        // check that we got the id and name then save them to use later
+        if(isset($result['personFName']) && isset($result['personLName']) && isset($result['email']) && isset($result['passphrase']) && isset($result['personType']) && isset($result['phone']) && isset($result['streetAddress']) && isset($result['city']) && isset($result['USState']) && isset($result['zipCode'])){
+        $personFName = $result['personFName'];
+        $personLName = $result['personLName'];
+        $email = $result['email'];
+        $passphrase = $result['passphrase'];
+        $personType = $result['personType'];
+        $phone = $result['phone'];
+        $streetAddress = $result['streetAddress'];
+        $city = $result['city'];
+        $usState = $result['USState'];
+        $zipCode = $result['zipCode'];
+        }
+    }catch(PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
+    }
 ?>
 
 <!DOCTYPE html>
@@ -16,6 +59,11 @@
                 <span class="input-group-text">First and Last name</span>
                 <input type="text" placeholder="First Name" aria-label="First name" class="form-control"  <?php echo "value='$personFName'"; ?> name="newfname">
                 <input type="text" placeholder="Last Name" aria-label="Last name" class="form-control" <?php echo "value='$personLName'"; ?> name="newlname">
+            </div>
+
+            <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">Email Address</span>
+            <input type="text" class="form-control" <?php echo "value='$email'"; ?> placeholder="Email" aria-label="E-mail_Address@example.com" aria-describedby="basic-addon1" name="newemail">
             </div>
 
             <div class="input-group mb-3">
@@ -40,6 +88,8 @@
                 <span class="input-group-text" id="basic-addon1">Confirm Password</span>
                 <input type="password" class="form-control" <?php echo "value=".$passphrase; ?> placeholder="Confirm Password" aria-label="Confirm" aria-describedby="basic-addon1">
             </div>
+
+            <?php echo "<input type='hidden' name='personID' value='".$personID."'>"; ?>
             
             <center><button type="submit" class="btn btn-outline-primary">Update Account</button></a></center>
             <br></br>

@@ -49,9 +49,6 @@
     $_SESSION['newPet'] = FALSE;
   }
 
-  
-  
-
   if($editPet){
     // see if we need to delete or update a pet
     if(isset($_POST['deletePet'])){
@@ -121,20 +118,16 @@
     $_SESSION['editPet'] = FALSE;
   }
 
-  
-
   if($editAcctInfo){
-    // update the pet
+    // update the acct
     // check if post info is set before assigning variables
     // otherwise we get annoying warnings on refresh
+    if(isset($_POST['personID'])){
+      $personID = $_POST['personID'];
+    }
+
     if(isset($_POST['deleteAcct'])){
       // delete the account
-      // check if post info is set before assigning variables
-      // otherwise we get annoying warnings on refresh
-      if(isset($_POST['personID'])){
-        $personID = $_POST['personID'];
-      }
-
       // if personID is non-empty, attempt to delete associated person from db 
       if(!empty($personID)){
         try{
@@ -145,15 +138,20 @@
 
           // do the sql query
           $q->execute();
-          header('Location: login.php');
+
+          // go back to login, if not admin
+          if($personType != 3){
+            header('Location: login.php');
+          }
         }catch(PDOException $e) {
           echo $sql . "<br>" . $e->getMessage();
         }
       }
     }else{
-      if(isset($_POST['newfname']) && isset($_POST['newlname']) && isset($_POST['newphone']) && isset($_POST['newstreet']) && isset($_POST['newcity']) && isset($_POST['newstate']) && isset($_POST['newzip']) && isset($_POST['newpassphrase'])){
+      if(isset($_POST['newfname']) && isset($_POST['newlname']) && isset($_POST['newemail']) && isset($_POST['newphone']) && isset($_POST['newstreet']) && isset($_POST['newcity']) && isset($_POST['newstate']) && isset($_POST['newzip']) && isset($_POST['newpassphrase'])){
         $newfname = $_POST['newfname'];
         $newlname = $_POST['newlname'];
+        $newemail = $_POST['newemail'];
         $newphone = $_POST['newphone'];
         $newstreet = $_POST['newstreet'];
         $newcity = $_POST['newcity'];
@@ -163,15 +161,16 @@
       }
   
       // only update review in db if new petname, species, requirements, and (not new) petID are non-empty
-      if(!empty($newfname) && !empty($newlname) && !empty($newphone) && !empty($newstreet) && !empty($newcity) && !empty($newstate) && !empty($newzip) && !empty($newpassphrase)){
+      if(!empty($newfname) && !empty($newlname) && !empty($newemail) && !empty($newphone) && !empty($newstreet) && !empty($newcity) && !empty($newstate) && !empty($newzip) && !empty($newpassphrase)){
         // try to update the database
         try{
           // use a prepared statement for the query to stop sql injections
-          $q = $conn->prepare("UPDATE PERSON SET personFName = :newFName, personLName = :newLname, phone = :newPhone, streetAddress = :newStreet, city = :newCity, USState = :newState, zipCode = :newZipcode, passphrase = :newPassphrase WHERE personID = :personID");
+          $q = $conn->prepare("UPDATE PERSON SET personFName = :newFName, personLName = :newLname, email = :newEmail, phone = :newPhone, streetAddress = :newStreet, city = :newCity, USState = :newState, zipCode = :newZipcode, passphrase = :newPassphrase WHERE personID = :personID");
           
           // replace the placeholders with the petname, species, requirements, and petID
           $q->bindParam(':newFName',$newfname);
           $q->bindParam(':newLname',$newlname);
+          $q->bindParam(':newEmail',$newemail);
           $q->bindParam(':newPhone',$newphone);
           $q->bindParam(':newStreet',$newstreet);
           $q->bindParam(':newCity',$newcity);
