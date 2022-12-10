@@ -18,4 +18,4 @@ SELECT DISTINCT
  LEFT JOIN 
     person AS person2 ON appointment.petSitter = person2.personID) 
  LEFT JOIN 
-    review ON appointment.appointmentID = review.appointmentID)
+    review ON appointment.appointmentID = review.appointmentID);
