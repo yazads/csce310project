@@ -222,7 +222,7 @@ if($selectAppt){
   if(!empty($apptID)){
     try {
       // prepare an sql query
-      $q = $conn->prepare("UPDATE appointment SET petSitter = :petSitter WHERE appointmentID =");
+      $q = $conn->prepare("UPDATE appointment SET petSitter = :petSitter WHERE appointmentID = :apptID");
     
       $q->bindParam(':petSitter',$personID);
       $q->bindParam(':apptID',$apptID);
