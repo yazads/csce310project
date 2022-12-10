@@ -4,8 +4,8 @@ USE petSitting;
 
 CREATE TABLE IF NOT EXISTS person( -- user is a reserved word :(
     personID int NOT NULL AUTO_INCREMENT,
-    passphrase varchar(65535),
     email varchar(65535),
+    passphrase varchar(65535),
     phone int,
     personFName varchar(65535),
     personLName varchar(65535),
